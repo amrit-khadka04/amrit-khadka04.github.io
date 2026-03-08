@@ -256,7 +256,7 @@
     // Animate language bars
     document.querySelectorAll('.bar-fill').forEach(function (bar) {
       var rect = bar.getBoundingClientRect();
-      if (rect.top < windowHeight - 40 && bar.style.width === '0px' || bar.style.width === '') {
+      if (rect.top < windowHeight - 40 && (bar.style.width === '0px' || bar.style.width === '')) {
         var width = bar.getAttribute('data-width');
         if (width) {
           bar.style.width = width + '%';
