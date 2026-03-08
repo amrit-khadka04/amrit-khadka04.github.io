@@ -206,7 +206,7 @@
   /* ===== Whoosh Sound ===== */
   var audioCtx = null;
   function getAudioContext() {
-    if (!audioCtx || audioCtx.state === 'closed') {
+    if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     return audioCtx;
