@@ -1,19 +1,18 @@
 /* ============================
-   Amrit Khadka — Portfolio JS
+   Amrit Khadka — Transformer City Portfolio JS
    ============================ */
 
 (function () {
   'use strict';
 
   /* ---------- Neural Network Background ---------- */
-  const canvas = document.getElementById('neural-bg');
+  var canvas = document.getElementById('neural-bg');
   if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    let animFrame;
-    const PARTICLE_COUNT = 60;
-    const CONNECTION_DIST = 150;
-    let mouse = { x: -1000, y: -1000 };
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var PARTICLE_COUNT = 50;
+    var CONNECTION_DIST = 140;
+    var mouse = { x: -1000, y: -1000 };
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -22,14 +21,14 @@
 
     function createParticles() {
       particles = [];
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
+      for (var i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
           radius: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.5 + 0.2,
+          opacity: Math.random() * 0.4 + 0.15,
         });
       }
     }
@@ -37,14 +36,13 @@
     function drawParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw connections
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var dx = particles[i].x - particles[j].x;
+          var dy = particles[i].y - particles[j].y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECTION_DIST) {
-            const opacity = (1 - dist / CONNECTION_DIST) * 0.15;
+            var opacity = (1 - dist / CONNECTION_DIST) * 0.12;
             ctx.strokeStyle = 'rgba(99, 102, 241, ' + opacity + ')';
             ctx.lineWidth = 0.5;
             ctx.beginPath();
@@ -55,21 +53,19 @@
         }
       }
 
-      // Draw particles
-      for (const p of particles) {
-        // Mouse interaction
-        const mdx = p.x - mouse.x;
-        const mdy = p.y - mouse.y;
-        const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+      for (var k = 0; k < particles.length; k++) {
+        var p = particles[k];
+        var mdx = p.x - mouse.x;
+        var mdy = p.y - mouse.y;
+        var mDist = Math.sqrt(mdx * mdx + mdy * mdy);
         if (mDist < 200) {
-          p.x += mdx * 0.01;
-          p.y += mdy * 0.01;
+          p.x += mdx * 0.008;
+          p.y += mdy * 0.008;
         }
 
         p.x += p.vx;
         p.y += p.vy;
 
-        // Bounce at edges
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
@@ -78,14 +74,13 @@
         ctx.fillStyle = 'rgba(139, 92, 246, ' + p.opacity + ')';
         ctx.fill();
 
-        // Glow
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(99, 102, 241, ' + (p.opacity * 0.1) + ')';
+        ctx.fillStyle = 'rgba(99, 102, 241, ' + (p.opacity * 0.08) + ')';
         ctx.fill();
       }
 
-      animFrame = requestAnimationFrame(drawParticles);
+      requestAnimationFrame(drawParticles);
     }
 
     resizeCanvas();
@@ -112,68 +107,40 @@
     });
   }
 
-  /* ---------- Navbar scroll effect ---------- */
-  var navbar = document.getElementById('navbar');
-  var navLinks = document.querySelectorAll('.nav-links a');
-  var sections = document.querySelectorAll('section[id]');
-
-  function updateNavbar() {
-    if (!navbar) return;
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-
-    // Active link
-    var scrollPos = window.scrollY + 200;
-    sections.forEach(function (sec) {
-      if (scrollPos >= sec.offsetTop && scrollPos < sec.offsetTop + sec.offsetHeight) {
-        navLinks.forEach(function (link) {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + sec.id) {
-            link.classList.add('active');
-          }
-        });
-      }
-    });
-  }
-
-  window.addEventListener('scroll', updateNavbar);
-  updateNavbar();
-
-  /* ---------- Mobile nav toggle ---------- */
+  /* ---------- Mobile Nav Toggle ---------- */
   var navToggle = document.getElementById('nav-toggle');
-  var navMenu = document.querySelector('.nav-links');
+  var mobileNav = document.getElementById('mobile-nav');
 
-  if (navToggle && navMenu) {
+  if (navToggle && mobileNav) {
     navToggle.addEventListener('click', function () {
-      navMenu.classList.toggle('open');
+      navToggle.classList.toggle('open');
+      mobileNav.classList.toggle('open');
     });
 
-    // Close menu on link click
-    navLinks.forEach(function (link) {
+    var mobileLinks = mobileNav.querySelectorAll('a');
+    mobileLinks.forEach(function (link) {
       link.addEventListener('click', function () {
-        navMenu.classList.remove('open');
+        navToggle.classList.remove('open');
+        mobileNav.classList.remove('open');
       });
     });
   }
 
-  /* ---------- Typing effect ---------- */
+  /* ---------- Typing Effect ---------- */
   var typedOutput = document.getElementById('typed-output');
   if (typedOutput) {
     var phrases = [
       'Building multimodal AI systems',
       'Vision-Language Model researcher',
       'React Native mobile engineer',
-      'Full-stack developer & AI enthusiast',
       'Transformer architecture explorer',
       'From UPI banking apps to VLLMs',
+      'Full-stack developer & AI enthusiast',
     ];
     var phraseIndex = 0;
     var charIndex = 0;
     var isDeleting = false;
-    var typingSpeed = 60;
+    var typingSpeed = 55;
 
     function type() {
       var current = phrases[phraseIndex];
@@ -185,7 +152,7 @@
         charIndex++;
       }
 
-      var delay = isDeleting ? 30 : typingSpeed;
+      var delay = isDeleting ? 25 : typingSpeed;
 
       if (!isDeleting && charIndex === current.length) {
         delay = 2000;
@@ -193,16 +160,16 @@
       } else if (isDeleting && charIndex === 0) {
         isDeleting = false;
         phraseIndex = (phraseIndex + 1) % phrases.length;
-        delay = 500;
+        delay = 400;
       }
 
       setTimeout(type, delay);
     }
 
-    setTimeout(type, 1000);
+    setTimeout(type, 800);
   }
 
-  /* ---------- Counter animation ---------- */
+  /* ---------- Counter Animation ---------- */
   function animateCounters() {
     var counters = document.querySelectorAll('.stat-number');
     counters.forEach(function (counter) {
@@ -210,8 +177,7 @@
       if (isNaN(target)) return;
       var current = 0;
       var increment = Math.max(1, Math.floor(target / 40));
-      var duration = 2000;
-      var stepTime = duration / (target / increment);
+      var stepTime = 50;
 
       function update() {
         current += increment;
@@ -227,62 +193,152 @@
     });
   }
 
-  /* ---------- Scroll reveal ---------- */
-  var revealElements = document.querySelectorAll('.reveal-up');
+  /* ---------- Scroll Reveal via Intersection Observer ---------- */
+  var revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -60px 0px'
+  });
+
+  document.querySelectorAll('.reveal-up').forEach(function (el) {
+    revealObserver.observe(el);
+  });
+
+  /* ---------- Stats Counter Trigger ---------- */
   var countersAnimated = false;
-
-  function checkReveal() {
-    var windowHeight = window.innerHeight;
-
-    revealElements.forEach(function (el) {
-      var rect = el.getBoundingClientRect();
-      if (rect.top < windowHeight - 80) {
-        el.classList.add('revealed');
+  var statsObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && !countersAnimated) {
+        countersAnimated = true;
+        animateCounters();
+        statsObserver.unobserve(entry.target);
       }
     });
+  }, { threshold: 0.3 });
 
-    // Animate counters when hero stats become visible
-    if (!countersAnimated) {
-      var statsSection = document.querySelector('.hero-stats');
-      if (statsSection) {
-        var rect = statsSection.getBoundingClientRect();
-        if (rect.top < windowHeight) {
-          countersAnimated = true;
-          animateCounters();
-        }
-      }
-    }
-
-    // Animate language bars
-    document.querySelectorAll('.bar-fill').forEach(function (bar) {
-      var rect = bar.getBoundingClientRect();
-      if (rect.top < windowHeight - 40 && (bar.style.width === '0px' || bar.style.width === '')) {
-        var width = bar.getAttribute('data-width');
-        if (width) {
-          bar.style.width = width + '%';
-        }
-      }
-    });
+  var statsSection = document.querySelector('.hero-stats');
+  if (statsSection) {
+    statsObserver.observe(statsSection);
   }
 
-  window.addEventListener('scroll', checkReveal);
-  window.addEventListener('load', checkReveal);
+  /* ---------- Language Bar Animation ---------- */
+  var barObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var bars = entry.target.querySelectorAll('.bar-fill');
+        bars.forEach(function (bar) {
+          var width = bar.getAttribute('data-width');
+          if (width) {
+            bar.style.width = width + '%';
+          }
+        });
+        barObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
 
-  /* ---------- Smooth scroll for nav links ---------- */
+  var langSection = document.querySelector('.lang-bars');
+  if (langSection) {
+    barObserver.observe(langSection);
+  }
+
+  /* ---------- Mini-Map Active Section Tracking ---------- */
+  var minimapNodes = document.querySelectorAll('.minimap-node');
+  var sections = document.querySelectorAll('.building-section');
+
+  var sectionObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        // Add in-view class to section for CSS animations
+        entry.target.classList.add('in-view');
+
+        // Update minimap
+        var sectionId = entry.target.id;
+        minimapNodes.forEach(function (node) {
+          node.classList.remove('active');
+          if (node.getAttribute('href') === '#' + sectionId) {
+            node.classList.add('active');
+          }
+        });
+      }
+    });
+  }, {
+    threshold: 0.3,
+    rootMargin: '-10% 0px -10% 0px'
+  });
+
+  sections.forEach(function (section) {
+    sectionObserver.observe(section);
+  });
+
+  /* ---------- Smooth Scroll for All Anchor Links ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
-      var target = document.querySelector(this.getAttribute('href'));
-      if (target) {
+      var targetEl = document.querySelector(this.getAttribute('href'));
+      if (targetEl) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
+        targetEl.scrollIntoView({ behavior: 'smooth' });
       }
     });
   });
 
-  /* ---------- Transformer viz animation enhancement ---------- */
-  var neurons = document.querySelectorAll('.neuron');
-  neurons.forEach(function (neuron, i) {
-    neuron.style.animationDelay = (i * 0.3) + 's';
+  /* ---------- Parallax Building Entrances on Scroll ---------- */
+  var buildingEntrances = document.querySelectorAll('.building-entrance');
+
+  function updateParallax() {
+    var scrollY = window.scrollY;
+    var windowH = window.innerHeight;
+
+    buildingEntrances.forEach(function (entrance) {
+      var rect = entrance.getBoundingClientRect();
+      var centerY = rect.top + rect.height / 2;
+      var offset = (centerY - windowH / 2) / windowH;
+      var building = entrance.querySelector('.building-3d');
+      if (building) {
+        var translateY = offset * -15;
+        var rotateExtra = offset * 3;
+        building.style.transform = 'translateY(' + translateY + 'px)';
+      }
+    });
+  }
+
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(function () {
+        updateParallax();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  /* ---------- Isometric City Building Click to Navigate ---------- */
+  var isoBuildings = document.querySelectorAll('.iso-building[data-building]');
+  var buildingMap = {
+    embedding: '#about',
+    positional: '#architecture',
+    attention: '#experience',
+    ffn: '#projects',
+    layernorm: '#education',
+    output: '#contact'
+  };
+
+  isoBuildings.forEach(function (building) {
+    building.style.cursor = 'pointer';
+    building.addEventListener('click', function () {
+      var target = buildingMap[this.getAttribute('data-building')];
+      if (target) {
+        var el = document.querySelector(target);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
   });
 
 })();
