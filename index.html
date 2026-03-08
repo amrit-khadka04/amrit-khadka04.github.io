@@ -3,583 +3,301 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Amrit Khadka — Interactive World Map Portfolio</title>
-  <meta name="description" content="Explore the world of Amrit Khadka — AI researcher & software engineer. Navigate a Google Maps-style 3D interactive portfolio." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>" />
+  <title>Amrit Khadka — Universe Portfolio</title>
+  <meta name="description" content="Explore the universe of Amrit Khadka — AI researcher & software engineer. Navigate a galaxy-style interactive portfolio." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌌</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ==================== WELCOME OVERLAY ==================== -->
-  <div id="welcome-overlay">
-    <div class="welcome-content">
-      <div class="welcome-globe">
-        <div class="globe-ring r1"></div>
-        <div class="globe-ring r2"></div>
-        <div class="globe-ring r3"></div>
-        <div class="globe-dot"></div>
+  <!-- ==================== LOADING SCREEN ==================== -->
+  <div id="loading-screen">
+    <div class="loading-content">
+      <div class="warp-tunnel">
+        <div class="warp-ring"></div>
+        <div class="warp-ring"></div>
+        <div class="warp-ring"></div>
+        <div class="warp-ring"></div>
+        <div class="warp-ring"></div>
       </div>
-      <h1>Welcome to <span class="gradient-text">Amrit's World</span></h1>
-      <p class="welcome-sub">AI &amp; Software Engineer — MS CS @ TU Darmstadt</p>
-      <p class="welcome-hint">Navigate a 3D interactive map to explore my journey</p>
-      <div class="welcome-instructions">
-        <div class="instr"><i class="fas fa-mouse"></i><span>Scroll to zoom</span></div>
-        <div class="instr"><i class="fas fa-hand-pointer"></i><span>Drag to pan</span></div>
-        <div class="instr"><i class="fas fa-building"></i><span>Click buildings to explore</span></div>
+      <h1 class="loading-title">Entering the Universe</h1>
+      <div class="loading-bar-container">
+        <div class="loading-bar" id="loading-bar"></div>
       </div>
-      <button id="start-btn" class="btn-start">
-        <i class="fas fa-map-marked-alt"></i> Start Exploring
-      </button>
+      <p class="loading-text" id="loading-text">Initializing star systems...</p>
     </div>
   </div>
 
-  <!-- ==================== SEARCH BAR ==================== -->
-  <div id="search-bar">
-    <div class="search-inner">
-      <i class="fas fa-search"></i>
-      <input type="text" id="search-input" placeholder="Search Amrit's World..." autocomplete="off" />
+  <!-- ==================== CUSTOM CURSOR ==================== -->
+  <div id="cursor-glow"></div>
+
+  <!-- ==================== STARS CANVAS ==================== -->
+  <canvas id="stars-canvas"></canvas>
+
+  <!-- ==================== SHOOTING STARS ==================== -->
+  <div id="shooting-stars"></div>
+
+  <!-- ==================== UNIVERSE CONTAINER ==================== -->
+  <div id="universe" tabindex="0">
+
+    <!-- ===== PLANETS ===== -->
+    <div class="planet" id="planet-home" data-section="home" data-label="Home Base">
+      <div class="planet-body home-planet">
+        <div class="planet-ring"></div>
+        <div class="planet-glow"></div>
+        <span class="planet-icon">🏠</span>
+      </div>
+      <div class="planet-label">Home Base</div>
     </div>
-    <div id="search-results"></div>
+
+    <div class="planet" id="planet-about" data-section="about" data-label="About Me">
+      <div class="planet-body about-planet">
+        <div class="planet-ring"></div>
+        <div class="planet-glow"></div>
+        <span class="planet-icon">👨‍🚀</span>
+      </div>
+      <div class="planet-label">About Me</div>
+    </div>
+
+    <div class="planet" id="planet-skills" data-section="skills" data-label="Skills">
+      <div class="planet-body skills-planet">
+        <div class="planet-ring"></div>
+        <div class="planet-glow"></div>
+        <span class="planet-icon">⚡</span>
+      </div>
+      <div class="planet-label">Skills</div>
+    </div>
+
+    <div class="planet" id="planet-projects" data-section="projects" data-label="Projects">
+      <div class="planet-body projects-planet">
+        <div class="planet-ring"></div>
+        <div class="planet-glow"></div>
+        <span class="planet-icon">🚀</span>
+      </div>
+      <div class="planet-label">Projects</div>
+    </div>
+
+    <div class="planet" id="planet-experience" data-section="experience" data-label="Experience">
+      <div class="planet-body experience-planet">
+        <div class="planet-ring"></div>
+        <div class="planet-glow"></div>
+        <span class="planet-icon">💼</span>
+      </div>
+      <div class="planet-label">Experience</div>
+    </div>
+
+    <div class="planet" id="planet-contact" data-section="contact" data-label="Contact">
+      <div class="planet-body contact-planet">
+        <div class="planet-ring"></div>
+        <div class="planet-glow"></div>
+        <span class="planet-icon">📡</span>
+      </div>
+      <div class="planet-label">Contact</div>
+    </div>
+
   </div>
 
-  <!-- ==================== MAP VIEWPORT ==================== -->
-  <div id="map-viewport">
-    <div id="map-world">
+  <!-- ==================== SECTION PANELS ==================== -->
 
-      <!-- Terrain Grid -->
-      <div id="terrain"></div>
-
-      <!-- Roads SVG -->
-      <svg id="roads" viewBox="0 0 5000 4000" preserveAspectRatio="none">
-        <!-- Main roads from center to each building -->
-        <line x1="2500" y1="2000" x2="900" y2="700" class="road main-road" />
-        <line x1="2500" y1="2000" x2="2500" y2="600" class="road main-road" />
-        <line x1="2500" y1="2000" x2="4100" y2="700" class="road main-road" />
-        <line x1="2500" y1="2000" x2="4100" y2="2900" class="road main-road" />
-        <line x1="2500" y1="2000" x2="900" y2="2900" class="road main-road" />
-        <line x1="2500" y1="2000" x2="2500" y2="3400" class="road main-road" />
-        <!-- Ring road -->
-        <path d="M 900,700 Q 1700,300 2500,600 Q 3300,300 4100,700 Q 4500,1800 4100,2900 Q 3300,3500 2500,3400 Q 1700,3500 900,2900 Q 500,1800 900,700 Z" class="road ring-road" fill="none" />
-        <!-- Decorative paths -->
-        <circle cx="2500" cy="2000" r="300" class="road-circle" fill="none" />
-        <circle cx="2500" cy="2000" r="150" class="road-circle-inner" fill="none" />
-      </svg>
-
-      <!-- Decorative Elements -->
-      <div class="map-decoration tree-cluster" style="left:1700px;top:1200px;">🌳🌲🌳</div>
-      <div class="map-decoration tree-cluster" style="left:3200px;top:1500px;">🌲🌳🌲</div>
-      <div class="map-decoration tree-cluster" style="left:1800px;top:2800px;">🌳🌲</div>
-      <div class="map-decoration tree-cluster" style="left:3400px;top:2500px;">🌲🌳🌲</div>
-      <div class="map-decoration tree-cluster" style="left:600px;top:1800px;">🌳🌲🌳🌲</div>
-      <div class="map-decoration tree-cluster" style="left:4300px;top:1800px;">🌲🌳🌲</div>
-      <div class="map-decoration pond" style="left:2000px;top:1400px;"></div>
-      <div class="map-decoration pond" style="left:3100px;top:2200px;"></div>
-      <div class="map-decoration park" style="left:1400px;top:2400px;"></div>
-
-      <!-- ===== BUILDING: HQ (Center) ===== -->
-      <div class="map-building hq-building" data-section="hero" style="left:2500px;top:2000px;">
-        <div class="building-shadow"></div>
-        <div class="building-3d hq">
-          <div class="b-face b-front"></div>
-          <div class="b-face b-right"></div>
-          <div class="b-face b-top"></div>
-          <div class="b-windows"></div>
-          <div class="b-antenna"></div>
-        </div>
-        <div class="building-pulse"></div>
-        <div class="building-label">
-          <div class="label-icon"><i class="fas fa-landmark"></i></div>
-          <span>Amrit Khadka HQ</span>
-        </div>
+  <!-- HOME PANEL -->
+  <div class="section-panel" id="panel-home">
+    <button class="panel-close" aria-label="Close panel">&times;</button>
+    <div class="panel-content">
+      <h1 class="hero-title">Amrit <span class="neon-text">Khadka</span></h1>
+      <p class="hero-subtitle">AI &amp; Software Engineer</p>
+      <p class="hero-desc">M.Sc. Computer Science @ TU Darmstadt<br>Exploring Vision-Language Models &amp; Multimodal AI</p>
+      <div class="hero-links">
+        <a href="https://github.com/Amritkc" target="_blank" rel="noopener" class="hero-link"><i class="fab fa-github"></i> GitHub</a>
+        <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener" class="hero-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+        <a href="mailto:Amritkhadka6719@gmail.com" class="hero-link"><i class="fas fa-envelope"></i> Email</a>
       </div>
-
-      <!-- ===== BUILDING: About Me ===== -->
-      <div class="map-building" data-section="about" style="left:900px;top:700px;">
-        <div class="building-shadow"></div>
-        <div class="building-3d about">
-          <div class="b-face b-front"></div>
-          <div class="b-face b-right"></div>
-          <div class="b-face b-top"></div>
-          <div class="b-windows"></div>
-        </div>
-        <div class="building-pulse"></div>
-        <div class="building-label">
-          <div class="label-icon"><i class="fas fa-user-astronaut"></i></div>
-          <span>Research Lab</span>
-        </div>
-      </div>
-
-      <!-- ===== BUILDING: Skills ===== -->
-      <div class="map-building" data-section="skills" style="left:2500px;top:600px;">
-        <div class="building-shadow"></div>
-        <div class="building-3d skills">
-          <div class="b-face b-front"></div>
-          <div class="b-face b-right"></div>
-          <div class="b-face b-top"></div>
-          <div class="b-windows"></div>
-        </div>
-        <div class="building-pulse"></div>
-        <div class="building-label">
-          <div class="label-icon"><i class="fas fa-cogs"></i></div>
-          <span>Skills Factory</span>
-        </div>
-      </div>
-
-      <!-- ===== BUILDING: Experience ===== -->
-      <div class="map-building" data-section="experience" style="left:4100px;top:700px;">
-        <div class="building-shadow"></div>
-        <div class="building-3d experience">
-          <div class="b-face b-front"></div>
-          <div class="b-face b-right"></div>
-          <div class="b-face b-top"></div>
-          <div class="b-windows"></div>
-        </div>
-        <div class="building-pulse"></div>
-        <div class="building-label">
-          <div class="label-icon"><i class="fas fa-briefcase"></i></div>
-          <span>Experience District</span>
-        </div>
-      </div>
-
-      <!-- ===== BUILDING: Projects ===== -->
-      <div class="map-building" data-section="projects" style="left:4100px;top:2900px;">
-        <div class="building-shadow"></div>
-        <div class="building-3d projects">
-          <div class="b-face b-front"></div>
-          <div class="b-face b-right"></div>
-          <div class="b-face b-top"></div>
-          <div class="b-windows"></div>
-        </div>
-        <div class="building-pulse"></div>
-        <div class="building-label">
-          <div class="label-icon"><i class="fas fa-rocket"></i></div>
-          <span>Innovation Park</span>
-        </div>
-      </div>
-
-      <!-- ===== BUILDING: Education ===== -->
-      <div class="map-building" data-section="education" style="left:900px;top:2900px;">
-        <div class="building-shadow"></div>
-        <div class="building-3d education">
-          <div class="b-face b-front"></div>
-          <div class="b-face b-right"></div>
-          <div class="b-face b-top"></div>
-          <div class="b-windows"></div>
-        </div>
-        <div class="building-pulse"></div>
-        <div class="building-label">
-          <div class="label-icon"><i class="fas fa-graduation-cap"></i></div>
-          <span>University Campus</span>
-        </div>
-      </div>
-
-      <!-- ===== BUILDING: Contact ===== -->
-      <div class="map-building" data-section="contact" style="left:2500px;top:3400px;">
-        <div class="building-shadow"></div>
-        <div class="building-3d contact">
-          <div class="b-face b-front"></div>
-          <div class="b-face b-right"></div>
-          <div class="b-face b-top"></div>
-          <div class="b-windows"></div>
-        </div>
-        <div class="building-pulse"></div>
-        <div class="building-label">
-          <div class="label-icon"><i class="fas fa-satellite-dish"></i></div>
-          <span>Communication Hub</span>
-        </div>
-      </div>
-
+      <p class="hero-hint">Click other planets to explore sections of my universe</p>
     </div>
   </div>
 
-  <!-- ==================== MAP CONTROLS ==================== -->
-  <div id="map-controls">
-    <button id="zoom-in-btn" title="Zoom in"><i class="fas fa-plus"></i></button>
-    <div id="zoom-level-display">1.0x</div>
-    <button id="zoom-out-btn" title="Zoom out"><i class="fas fa-minus"></i></button>
-    <div class="controls-divider"></div>
-    <button id="home-btn" title="Reset view"><i class="fas fa-home"></i></button>
-    <button id="tilt-btn" title="Toggle 3D tilt"><i class="fas fa-cube"></i></button>
-  </div>
-
-  <!-- ==================== MINIMAP ==================== -->
-  <div id="minimap">
-    <div id="minimap-viewport"></div>
-    <div class="minimap-dot" data-target="hero" style="left:50%;top:50%;"></div>
-    <div class="minimap-dot" data-target="about" style="left:18%;top:17%;"></div>
-    <div class="minimap-dot" data-target="skills" style="left:50%;top:15%;"></div>
-    <div class="minimap-dot" data-target="experience" style="left:82%;top:17%;"></div>
-    <div class="minimap-dot" data-target="projects" style="left:82%;top:72%;"></div>
-    <div class="minimap-dot" data-target="education" style="left:18%;top:72%;"></div>
-    <div class="minimap-dot" data-target="contact" style="left:50%;top:85%;"></div>
-  </div>
-
-  <!-- ==================== COORDINATES DISPLAY ==================== -->
-  <div id="coords-display">
-    <span id="coords-text">0°N 0°E</span>
-    <span id="zoom-text">Zoom: 1.0x</span>
-  </div>
-
-  <!-- ==================== INFO PANEL ==================== -->
-  <div id="info-panel">
-    <button id="panel-close"><i class="fas fa-times"></i></button>
-    <div id="panel-content">
-
-      <!-- HERO PANEL -->
-      <div class="panel-section" data-panel="hero">
-        <div class="panel-header hero-gradient">
-          <div class="panel-icon"><i class="fas fa-landmark"></i></div>
-          <h2>Amrit Khadka HQ</h2>
-          <span class="panel-tag">Headquarters</span>
+  <!-- ABOUT PANEL -->
+  <div class="section-panel" id="panel-about">
+    <button class="panel-close" aria-label="Close panel">&times;</button>
+    <div class="panel-content">
+      <h2 class="section-title"><i class="fas fa-user-astronaut"></i> About Me</h2>
+      <div class="about-grid">
+        <div class="about-card glass-card">
+          <h3>🔬 Research Focus</h3>
+          <p>Currently at UKP Lab, TU Darmstadt working on Vision-Language Models, visual reasoning, and multimodal AI systems.</p>
         </div>
-        <div class="panel-body">
-          <div class="hero-card">
-            <div class="hero-name-big">Amrit Khadka</div>
-            <div class="hero-role">AI &amp; Software Engineer</div>
-            <div class="hero-typed-wrapper">
-              <span class="typed-prefix">&gt; </span>
-              <span id="typed-output" class="typed-output"></span>
-              <span class="typed-cursor">|</span>
-            </div>
-            <p class="hero-desc">Master's student in Computer Science at <strong>TU Darmstadt</strong>, Germany. Building the future at the intersection of AI research and software engineering.</p>
-          </div>
-          <div class="stats-row">
-            <div class="stat-box">
-              <div class="stat-num" data-target="4">0</div>
-              <div class="stat-label">Years Exp</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-num" data-target="10">0</div>
-              <div class="stat-label">Projects</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-num" data-target="10">0</div>
-              <div class="stat-label">K+ Downloads</div>
-            </div>
-          </div>
-          <div class="quick-links">
-            <a href="mailto:Amritkhadka6719@gmail.com" class="qlink"><i class="fas fa-envelope"></i> Email</a>
-            <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer" class="qlink"><i class="fab fa-linkedin"></i> LinkedIn</a>
-            <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer" class="qlink"><i class="fab fa-github"></i> GitHub</a>
-          </div>
+        <div class="about-card glass-card">
+          <h3>🎓 Academic Background</h3>
+          <p>M.Sc. Computer Science at TU Darmstadt. Previously B.C.A. from Bengaluru City University with a strong foundation in AI/ML.</p>
+        </div>
+        <div class="about-card glass-card">
+          <h3>💡 Passion</h3>
+          <p>Building intelligent systems that bridge the gap between visual perception and language understanding. Pushing the boundaries of multimodal AI.</p>
+        </div>
+        <div class="about-card glass-card">
+          <h3>🌍 Location</h3>
+          <p>Based in Darmstadt, Germany. Originally from Nepal. Passionate about global tech collaboration and open-source.</p>
         </div>
       </div>
-
-      <!-- ABOUT PANEL -->
-      <div class="panel-section" data-panel="about">
-        <div class="panel-header about-gradient">
-          <div class="panel-icon"><i class="fas fa-user-astronaut"></i></div>
-          <h2>Research Lab</h2>
-          <span class="panel-tag">About Me</span>
-        </div>
-        <div class="panel-body">
-          <div class="info-card">
-            <h3><i class="fas fa-user-astronaut"></i> Who I Am</h3>
-            <p>I'm <strong>Amrit Khadka</strong>, a Master's student in Computer Science at <strong>TU Darmstadt</strong>, Germany. I transform complex problems into elegant solutions.</p>
-            <p>I've built production apps that serve thousands of users — from <strong>UPI banking apps</strong> for Axis Bank to <strong>digital currency platforms</strong> (eRupes CBDC) and <strong>health-tech platforms</strong>.</p>
-          </div>
-          <div class="info-card">
-            <h3><i class="fas fa-flask"></i> Current Focus</h3>
-            <p>At the <strong>UKP Lab</strong> (TU Darmstadt), I research <strong>Vision-Language Models</strong> and transformer architectures. I work with models like Qwen-VL on VLLM, building multimodal visual reasoning systems.</p>
-          </div>
-          <div class="pills-row">
-            <span class="pill">React Native</span>
-            <span class="pill">JavaScript / TypeScript</span>
-            <span class="pill">Kotlin</span>
-            <span class="pill">Swift</span>
-            <span class="pill">Python</span>
-            <span class="pill">PyTorch</span>
-            <span class="pill">Hugging Face</span>
-            <span class="pill">FastAPI</span>
-            <span class="pill">Docker</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- SKILLS PANEL -->
-      <div class="panel-section" data-panel="skills">
-        <div class="panel-header skills-gradient">
-          <div class="panel-icon"><i class="fas fa-cogs"></i></div>
-          <h2>Skills Factory</h2>
-          <span class="panel-tag">Technical Skills</span>
-        </div>
-        <div class="panel-body">
-          <div class="skill-group">
-            <h4><i class="fas fa-robot"></i> AI / ML</h4>
-            <div class="skill-chips">
-              <span>PyTorch</span><span>Hugging Face</span><span>VLLM</span><span>Vision Transformers</span><span>CNNs</span><span>NLP</span><span>CUDA</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h4><i class="fas fa-code"></i> Languages</h4>
-            <div class="skill-chips">
-              <span>Python</span><span>JavaScript</span><span>TypeScript</span><span>Kotlin</span><span>Swift</span><span>Java</span><span>SQL</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h4><i class="fas fa-layer-group"></i> Frameworks</h4>
-            <div class="skill-chips">
-              <span>React</span><span>React Native</span><span>FastAPI</span><span>Node.js</span><span>Next.js</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h4><i class="fas fa-server"></i> DevOps</h4>
-            <div class="skill-chips">
-              <span>Docker</span><span>Kubernetes</span><span>Jenkins</span><span>Git</span><span>Slurm</span><span>Conda</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h4><i class="fas fa-database"></i> Databases</h4>
-            <div class="skill-chips">
-              <span>PostgreSQL</span><span>MongoDB</span><span>Redis</span><span>Firebase</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h4><i class="fas fa-mobile-alt"></i> Mobile</h4>
-            <div class="skill-chips">
-              <span>React Native</span><span>Android (Kotlin)</span><span>iOS (Swift)</span><span>Expo</span>
-            </div>
-          </div>
-          <div class="info-card" style="margin-top:1rem;">
-            <h3><i class="fas fa-globe"></i> Spoken Languages</h3>
-            <div class="lang-bar-list">
-              <div class="lang-item"><span class="lang-name">English</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
-              <div class="lang-item"><span class="lang-name">German</span><span class="lang-level">B1</span><div class="lang-track"><div class="lang-fill" style="width:50%"></div></div></div>
-              <div class="lang-item"><span class="lang-name">Hindi</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
-              <div class="lang-item"><span class="lang-name">Nepali</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
-              <div class="lang-item"><span class="lang-name">Kannada</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- EXPERIENCE PANEL -->
-      <div class="panel-section" data-panel="experience">
-        <div class="panel-header exp-gradient">
-          <div class="panel-icon"><i class="fas fa-briefcase"></i></div>
-          <h2>Experience District</h2>
-          <span class="panel-tag">Work Experience</span>
-        </div>
-        <div class="panel-body">
-          <div class="timeline">
-            <div class="tl-item">
-              <div class="tl-dot"></div>
-              <div class="tl-content">
-                <div class="tl-header">
-                  <h4>Research Assistant — UKP Lab, TU Darmstadt</h4>
-                  <span class="tl-date">Oct 2025 – Present</span>
-                </div>
-                <ul>
-                  <li>Multimodal visual reasoning with <strong>Qwen-VL</strong> on VLLM</li>
-                  <li>Vision Transformers (ViT) and CNN architectures</li>
-                  <li>React → FastAPI → CUDA VLLM full pipeline</li>
-                  <li>Docker &amp; Conda containerized deployments</li>
-                  <li>Model management via Hugging Face Hub</li>
-                  <li>GPU cluster computing with Slurm</li>
-                </ul>
-                <div class="tl-tags"><span>Qwen-VL</span><span>VLLM</span><span>PyTorch</span><span>FastAPI</span><span>Docker</span><span>CUDA</span><span>Slurm</span></div>
-              </div>
-            </div>
-            <div class="tl-item">
-              <div class="tl-dot"></div>
-              <div class="tl-content">
-                <div class="tl-header">
-                  <h4>Software Engineer — Pathmate Technologies</h4>
-                  <span class="tl-date">Nov 2024 – May 2025</span>
-                </div>
-                <ul>
-                  <li>React Native mobile apps for health-tech</li>
-                  <li>Database design with PostgreSQL &amp; MongoDB</li>
-                  <li>CI/CD pipelines with Jenkins</li>
-                </ul>
-                <div class="tl-tags"><span>React Native</span><span>PostgreSQL</span><span>MongoDB</span><span>Jenkins</span></div>
-              </div>
-            </div>
-            <div class="tl-item">
-              <div class="tl-dot"></div>
-              <div class="tl-content">
-                <div class="tl-header">
-                  <h4>Software Engineer — Bloomsmobility Technologies</h4>
-                  <span class="tl-date">Dec 2021 – May 2023</span>
-                </div>
-                <ul>
-                  <li><strong>Axis Bank UPI</strong> apps — millions of transactions</li>
-                  <li><strong>eRupes CBDC</strong> digital currency application</li>
-                  <li>Production React Native / Kotlin mobile dev</li>
-                </ul>
-                <div class="tl-tags"><span>React Native</span><span>Kotlin</span><span>UPI</span><span>CBDC</span></div>
-              </div>
-            </div>
-            <div class="tl-item">
-              <div class="tl-dot"></div>
-              <div class="tl-content">
-                <div class="tl-header">
-                  <h4>Software Developer Intern — Archick Technologies</h4>
-                  <span class="tl-date">Mar 2021 – May 2021</span>
-                </div>
-                <ul>
-                  <li>Built <strong>HAP Daily</strong> and <strong>Repzy</strong> web apps</li>
-                  <li>Full-stack development with modern web tech</li>
-                </ul>
-                <div class="tl-tags"><span>JavaScript</span><span>React</span><span>Node.js</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROJECTS PANEL -->
-      <div class="panel-section" data-panel="projects">
-        <div class="panel-header proj-gradient">
-          <div class="panel-icon"><i class="fas fa-rocket"></i></div>
-          <h2>Innovation Park</h2>
-          <span class="panel-tag">Projects</span>
-        </div>
-        <div class="panel-body">
-          <div class="project-list">
-            <div class="proj-card">
-              <div class="proj-icon"><i class="fas fa-eye"></i></div>
-              <div class="proj-info">
-                <h4>Multimodal Visual Reasoning</h4>
-                <p>UKP Lab research: Qwen-VL for visual reasoning. Full pipeline React → FastAPI → CUDA VLLM.</p>
-                <div class="proj-tags"><span>Qwen-VL</span><span>VLLM</span><span>FastAPI</span><span>React</span></div>
-              </div>
-            </div>
-            <div class="proj-card">
-              <div class="proj-icon"><i class="fas fa-chart-line"></i></div>
-              <div class="proj-info">
-                <h4>PIPE-X Visualization Tool</h4>
-                <p>Advanced data visualization and pipeline exploration tool for complex data workflows.</p>
-                <div class="proj-tags"><span>Python</span><span>Data Viz</span><span>Analytics</span></div>
-              </div>
-            </div>
-            <div class="proj-card">
-              <div class="proj-icon"><i class="fas fa-face-laugh-squint"></i></div>
-              <div class="proj-info">
-                <h4>Meme Myself &amp; AI</h4>
-                <p>AI-powered meme generation combining computer vision and NLU.</p>
-                <div class="proj-tags"><span>AI/ML</span><span>NLP</span><span>Computer Vision</span></div>
-              </div>
-            </div>
-            <div class="proj-card">
-              <div class="proj-icon"><i class="fas fa-building-columns"></i></div>
-              <div class="proj-info">
-                <h4>Axis Bank UPI Platform</h4>
-                <p>Production UPI payments app serving millions of transactions.</p>
-                <div class="proj-tags"><span>React Native</span><span>Kotlin</span><span>UPI</span></div>
-              </div>
-            </div>
-            <div class="proj-card">
-              <div class="proj-icon"><i class="fas fa-coins"></i></div>
-              <div class="proj-info">
-                <h4>eRupes CBDC App</h4>
-                <p>India's official digital rupee platform for retail transactions.</p>
-                <div class="proj-tags"><span>React Native</span><span>CBDC</span><span>FinTech</span></div>
-              </div>
-            </div>
-            <div class="proj-card">
-              <div class="proj-icon"><i class="fas fa-mobile-screen"></i></div>
-              <div class="proj-info">
-                <h4>Nccstory Android App</h4>
-                <p>Android application with modern UI and native integration.</p>
-                <div class="proj-tags"><span>Android</span><span>Kotlin</span><span>Firebase</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- EDUCATION PANEL -->
-      <div class="panel-section" data-panel="education">
-        <div class="panel-header edu-gradient">
-          <div class="panel-icon"><i class="fas fa-graduation-cap"></i></div>
-          <h2>University Campus</h2>
-          <span class="panel-tag">Education</span>
-        </div>
-        <div class="panel-body">
-          <div class="edu-card-wrap">
-            <div class="edu-item">
-              <div class="edu-icon-lg"><i class="fas fa-university"></i></div>
-              <h4>M.Sc. Computer Science</h4>
-              <p class="edu-place">Technical University of Darmstadt, Germany</p>
-              <p class="edu-date">Apr 2024 – Present</p>
-              <div class="edu-courses">
-                <strong>Key Courses:</strong>
-                <span>Data Science</span><span>Artificial Intelligence</span><span>Program Analysis</span>
-                <span>Human-Centric ML</span><span>Statistical ML</span><span>Deep Learning</span>
-                <span>NLP Architecture</span>
-              </div>
-            </div>
-            <div class="edu-item">
-              <div class="edu-icon-lg"><i class="fas fa-graduation-cap"></i></div>
-              <h4>B.C.A. (Bachelor of Computer Applications)</h4>
-              <p class="edu-place">Bengaluru City University, India</p>
-              <p class="edu-date">Aug 2018 – May 2021</p>
-            </div>
-          </div>
-          <div class="info-card" style="margin-top:1.2rem;">
-            <h3><i class="fas fa-flask"></i> UKP Lab — Deep Dive</h3>
-            <p>The <strong>UKP Lab</strong> at TU Darmstadt, led by <strong>Prof. Iryna Gurevych</strong>, is one of Europe's leading NLP research groups.</p>
-            <div class="ukp-areas">
-              <span><i class="fas fa-language"></i> NLP</span>
-              <span><i class="fas fa-search"></i> Info Extraction</span>
-              <span><i class="fas fa-comments"></i> Argumentation</span>
-              <span><i class="fas fa-images"></i> Multimodal</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CONTACT PANEL -->
-      <div class="panel-section" data-panel="contact">
-        <div class="panel-header contact-gradient">
-          <div class="panel-icon"><i class="fas fa-satellite-dish"></i></div>
-          <h2>Communication Hub</h2>
-          <span class="panel-tag">Contact</span>
-        </div>
-        <div class="panel-body">
-          <div class="contact-list">
-            <a href="mailto:Amritkhadka6719@gmail.com" class="contact-item">
-              <i class="fas fa-envelope"></i>
-              <div><strong>Email</strong><br/>Amritkhadka6719@gmail.com</div>
-            </a>
-            <a href="tel:+4915252617981" class="contact-item">
-              <i class="fas fa-phone"></i>
-              <div><strong>Phone</strong><br/>+49 152-52617981</div>
-            </a>
-            <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer" class="contact-item">
-              <i class="fab fa-linkedin"></i>
-              <div><strong>LinkedIn</strong><br/>linkedin.com/in/amritkhadka04</div>
-            </a>
-            <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer" class="contact-item">
-              <i class="fab fa-github"></i>
-              <div><strong>GitHub</strong><br/>github.com/Amritkc</div>
-            </a>
-          </div>
-          <div class="info-card" style="margin-top:1.2rem;">
-            <h3><i class="fas fa-telescope"></i> Vision</h3>
-            <p>I aim to bridge the gap between cutting-edge AI research and practical software engineering, building systems that are both intelligent and production-ready.</p>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <!-- ==================== FOOTER BAR ==================== -->
-  <div id="footer-bar">
-    <span>© 2025 Amrit Khadka</span>
-    <span class="footer-sep">•</span>
-    <span>Built with ❤️</span>
-    <span class="footer-sep">•</span>
-    <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
-    <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-    <a href="mailto:Amritkhadka6719@gmail.com"><i class="fas fa-envelope"></i></a>
+  <!-- SKILLS PANEL -->
+  <div class="section-panel" id="panel-skills">
+    <button class="panel-close" aria-label="Close panel">&times;</button>
+    <div class="panel-content">
+      <h2 class="section-title"><i class="fas fa-star"></i> Skills Constellation</h2>
+      <canvas id="skills-canvas"></canvas>
+      <div class="skills-categories">
+        <div class="skill-category glass-card">
+          <h3>🤖 AI / ML</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">PyTorch</span>
+            <span class="skill-tag">Hugging Face</span>
+            <span class="skill-tag">VLLM</span>
+            <span class="skill-tag">CUDA</span>
+            <span class="skill-tag">TensorFlow</span>
+            <span class="skill-tag">Computer Vision</span>
+            <span class="skill-tag">NLP</span>
+          </div>
+        </div>
+        <div class="skill-category glass-card">
+          <h3>💻 Languages</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">TypeScript</span>
+            <span class="skill-tag">Java</span>
+            <span class="skill-tag">C++</span>
+            <span class="skill-tag">SQL</span>
+          </div>
+        </div>
+        <div class="skill-category glass-card">
+          <h3>🛠️ Tools &amp; Frameworks</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">React Native</span>
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Docker</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">Linux</span>
+            <span class="skill-tag">AWS</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- PROJECTS PANEL -->
+  <div class="section-panel" id="panel-projects">
+    <button class="panel-close" aria-label="Close panel">&times;</button>
+    <div class="panel-content">
+      <h2 class="section-title"><i class="fas fa-rocket"></i> Projects Galaxy</h2>
+      <p class="section-subtitle">Repositories fetched live from GitHub</p>
+      <div id="projects-container" class="projects-grid">
+        <div class="loading-repos">
+          <div class="spinner"></div>
+          <p>Fetching repositories from the cosmos...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE PANEL -->
+  <div class="section-panel" id="panel-experience">
+    <button class="panel-close" aria-label="Close panel">&times;</button>
+    <div class="panel-content">
+      <h2 class="section-title"><i class="fas fa-briefcase"></i> Experience</h2>
+      <div class="timeline">
+        <div class="timeline-item glass-card">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <h3>Research Assistant — UKP Lab, TU Darmstadt</h3>
+            <span class="timeline-date">2024 — Present</span>
+            <p>Working on Vision-Language Models and multimodal AI research. Developing novel approaches for visual reasoning tasks.</p>
+          </div>
+        </div>
+        <div class="timeline-item glass-card">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <h3>Software Developer — Pathmate Technologies</h3>
+            <span class="timeline-date">2023 — 2024</span>
+            <p>Built health-tech solutions using React Native and Node.js. Developed patient engagement platforms.</p>
+          </div>
+        </div>
+        <div class="timeline-item glass-card">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <h3>Mobile App Developer — Bloomsmobility</h3>
+            <span class="timeline-date">2022 — 2023</span>
+            <p>Developed Axis Bank UPI integration and digital payment solutions for mobile platforms.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT PANEL -->
+  <div class="section-panel" id="panel-contact">
+    <button class="panel-close" aria-label="Close panel">&times;</button>
+    <div class="panel-content">
+      <h2 class="section-title"><i class="fas fa-satellite-dish"></i> Contact</h2>
+      <p class="section-subtitle">Send a signal across the universe</p>
+      <div class="contact-grid">
+        <a href="mailto:Amritkhadka6719@gmail.com" class="contact-card glass-card">
+          <i class="fas fa-envelope"></i>
+          <h3>Email</h3>
+          <p>Amritkhadka6719@gmail.com</p>
+        </a>
+        <a href="https://github.com/Amritkc" target="_blank" rel="noopener" class="contact-card glass-card">
+          <i class="fab fa-github"></i>
+          <h3>GitHub</h3>
+          <p>@Amritkc</p>
+        </a>
+        <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener" class="contact-card glass-card">
+          <i class="fab fa-linkedin"></i>
+          <h3>LinkedIn</h3>
+          <p>Amrit Khadka</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CODE VIEWER MODAL ==================== -->
+  <div id="code-modal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3 id="code-modal-title">Code Viewer</h3>
+        <button class="modal-close" id="code-modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="code-modal-loading" class="loading-repos">
+          <div class="spinner"></div>
+          <p>Loading code...</p>
+        </div>
+        <pre id="code-modal-content"><code></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ZOOM CONTROLS ==================== -->
+  <div id="zoom-controls">
+    <button id="zoom-in" class="zoom-btn" aria-label="Zoom in"><i class="fas fa-plus"></i></button>
+    <button id="zoom-out" class="zoom-btn" aria-label="Zoom out"><i class="fas fa-minus"></i></button>
+    <button id="zoom-reset" class="zoom-btn" aria-label="Reset zoom"><i class="fas fa-compress-arrows-alt"></i></button>
+  </div>
+
+  <!-- ==================== NAV MENU ==================== -->
+  <nav id="nav-menu">
+    <button class="nav-btn" data-section="home" aria-label="Home"><i class="fas fa-home"></i><span>Home</span></button>
+    <button class="nav-btn" data-section="about" aria-label="About"><i class="fas fa-user"></i><span>About</span></button>
+    <button class="nav-btn" data-section="skills" aria-label="Skills"><i class="fas fa-star"></i><span>Skills</span></button>
+    <button class="nav-btn" data-section="projects" aria-label="Projects"><i class="fas fa-rocket"></i><span>Projects</span></button>
+    <button class="nav-btn" data-section="experience" aria-label="Experience"><i class="fas fa-briefcase"></i><span>Experience</span></button>
+    <button class="nav-btn" data-section="contact" aria-label="Contact"><i class="fas fa-satellite-dish"></i><span>Contact</span></button>
+  </nav>
 
   <script src="script.js"></script>
 </body>
