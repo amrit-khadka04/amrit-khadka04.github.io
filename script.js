@@ -75,6 +75,11 @@
   var panelSections = document.querySelectorAll('.panel-section');
   var minimapDots = document.querySelectorAll('.minimap-dot');
 
+  /* ===== Helpers ===== */
+  function isInteractiveElement(target) {
+    return target.closest('.map-building') || target.closest('#map-controls') || target.closest('#minimap') || target.closest('#info-panel') || target.closest('#search-bar');
+  }
+
   /* ===== Initialize ===== */
   function init() {
     centerOnBuilding('hero', 0.5, false);
@@ -140,10 +145,10 @@
     zoomText.textContent = 'Zoom: ' + state.zoom.toFixed(1) + 'x';
 
     // Coordinates (fun fake GPS coords)
-    var centerWorldX = (viewport.clientWidth / 2 - state.panX) / state.zoom;
-    var centerWorldY = (viewport.clientHeight / 2 - state.panY) / state.zoom;
-    var lat = ((centerWorldY / WORLD_H) * 180 - 90).toFixed(1);
-    var lon = ((centerWorldX / WORLD_W) * 360 - 180).toFixed(1);
+    var viewCenterWorldX = (viewport.clientWidth / 2 - state.panX) / state.zoom;
+    var viewCenterWorldY = (viewport.clientHeight / 2 - state.panY) / state.zoom;
+    var lat = ((viewCenterWorldY / WORLD_H) * 180 - 90).toFixed(1);
+    var lon = ((viewCenterWorldX / WORLD_W) * 360 - 180).toFixed(1);
     coordsText.textContent = Math.abs(lat) + '°' + (lat >= 0 ? 'N' : 'S') + ' ' + Math.abs(lon) + '°' + (lon >= 0 ? 'E' : 'W');
 
     // Minimap viewport indicator
@@ -323,7 +328,12 @@
     matches.forEach(function (m) {
       var div = document.createElement('div');
       div.className = 'search-result-item';
-      div.innerHTML = '<i class="' + m.icon + '"></i><span>' + m.text + '</span>';
+      var icon = document.createElement('i');
+      icon.className = m.icon;
+      var span = document.createElement('span');
+      span.textContent = m.text;
+      div.appendChild(icon);
+      div.appendChild(span);
       div.addEventListener('click', function () {
         centerOnBuilding(m.section, BUILDING_ZOOM, true);
         setTimeout(function () { openPanel(m.section); }, 400);
@@ -372,7 +382,7 @@
 
     // Mouse drag to pan
     viewport.addEventListener('mousedown', function (e) {
-      if (e.target.closest('.map-building') || e.target.closest('#map-controls') || e.target.closest('#minimap') || e.target.closest('#info-panel') || e.target.closest('#search-bar')) return;
+      if (isInteractiveElement(e.target)) return;
       state.isDragging = true;
       state.dragStartX = e.clientX;
       state.dragStartY = e.clientY;
@@ -396,7 +406,7 @@
 
     // Touch events
     viewport.addEventListener('touchstart', function (e) {
-      if (e.target.closest('.map-building') || e.target.closest('#map-controls') || e.target.closest('#minimap') || e.target.closest('#info-panel') || e.target.closest('#search-bar')) return;
+      if (isInteractiveElement(e.target)) return;
 
       if (e.touches.length === 1) {
         state.isDragging = true;

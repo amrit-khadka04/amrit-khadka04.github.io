@@ -38,6 +38,9 @@ html, body {
   color: var(--text);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+#map-viewport, #map-controls, #minimap, .map-building, .building-label, #welcome-overlay {
   user-select: none;
 }
 
