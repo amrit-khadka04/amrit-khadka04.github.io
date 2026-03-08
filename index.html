@@ -41,6 +41,34 @@
   <!-- ==================== SHOOTING STARS ==================== -->
   <div id="shooting-stars"></div>
 
+  <!-- ==================== NEBULA CLOUDS ==================== -->
+  <div id="nebula-container">
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+    <div class="nebula nebula-4"></div>
+  </div>
+
+  <!-- ==================== BLACK HOLE ==================== -->
+  <div id="black-hole">
+    <div class="accretion-disk">
+      <div class="accretion-ring ring-1"></div>
+      <div class="accretion-ring ring-2"></div>
+      <div class="accretion-ring ring-3"></div>
+    </div>
+    <div class="event-horizon"></div>
+    <div class="singularity"></div>
+  </div>
+
+  <!-- ==================== SUPERNOVA CONTAINER ==================== -->
+  <div id="supernova-container"></div>
+
+  <!-- ==================== ROCKET ELEMENT ==================== -->
+  <div id="rocket">
+    <div class="rocket-body">🚀</div>
+    <div class="rocket-trail"></div>
+  </div>
+
   <!-- ==================== UNIVERSE CONTAINER ==================== -->
   <div id="universe" tabindex="0">
 
@@ -63,6 +91,25 @@
       <div class="planet-label">About Me</div>
     </div>
 
+    <div class="planet" id="planet-education" data-section="education" data-label="Education">
+      <div class="planet-body education-planet">
+        <div class="planet-ring"></div>
+        <div class="planet-glow"></div>
+        <div class="asteroid-belt">
+          <div class="asteroid a1"></div>
+          <div class="asteroid a2"></div>
+          <div class="asteroid a3"></div>
+          <div class="asteroid a4"></div>
+          <div class="asteroid a5"></div>
+          <div class="asteroid a6"></div>
+          <div class="asteroid a7"></div>
+          <div class="asteroid a8"></div>
+        </div>
+        <span class="planet-icon">🎓</span>
+      </div>
+      <div class="planet-label">Education</div>
+    </div>
+
     <div class="planet" id="planet-skills" data-section="skills" data-label="Skills">
       <div class="planet-body skills-planet">
         <div class="planet-ring"></div>
@@ -76,7 +123,15 @@
       <div class="planet-body projects-planet">
         <div class="planet-ring"></div>
         <div class="planet-glow"></div>
-        <span class="planet-icon">🚀</span>
+        <div class="asteroid-belt">
+          <div class="asteroid a1"></div>
+          <div class="asteroid a2"></div>
+          <div class="asteroid a3"></div>
+          <div class="asteroid a4"></div>
+          <div class="asteroid a5"></div>
+          <div class="asteroid a6"></div>
+        </div>
+        <span class="planet-icon">🛸</span>
       </div>
       <div class="planet-label">Projects</div>
     </div>
@@ -124,22 +179,103 @@
     <button class="panel-close" aria-label="Close panel">&times;</button>
     <div class="panel-content">
       <h2 class="section-title"><i class="fas fa-user-astronaut"></i> About Me</h2>
+      <div class="about-bio glass-card">
+        <p>I am a master's student in Computer Science at TU Darmstadt with strong experience in software development. I have built production applications, including UPI banking apps, digital currency apps, and health-tech platforms. Skilled in React Native, JavaScript/TypeScript, Kotlin, Swift, and Python, with foundational exposure to cloud technologies and DevOps workflows (AWS, CI/CD). I enjoy solving real-world problems with clean, efficient, and scalable code.</p>
+      </div>
       <div class="about-grid">
         <div class="about-card glass-card">
-          <h3>🔬 Research Focus</h3>
-          <p>Currently at UKP Lab, TU Darmstadt working on Vision-Language Models, visual reasoning, and multimodal AI systems.</p>
+          <div class="about-card-icon"><i class="fas fa-user"></i></div>
+          <h3>Name</h3>
+          <p>Amrit Khadka</p>
         </div>
         <div class="about-card glass-card">
-          <h3>🎓 Academic Background</h3>
-          <p>M.Sc. Computer Science at TU Darmstadt. Previously B.C.A. from Bengaluru City University with a strong foundation in AI/ML.</p>
+          <div class="about-card-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <h3>Location</h3>
+          <p>Darmstadt, DE</p>
         </div>
         <div class="about-card glass-card">
-          <h3>💡 Passion</h3>
-          <p>Building intelligent systems that bridge the gap between visual perception and language understanding. Pushing the boundaries of multimodal AI.</p>
+          <div class="about-card-icon"><i class="fas fa-birthday-cake"></i></div>
+          <h3>Date of Birth</h3>
+          <p>04-01-2000</p>
         </div>
         <div class="about-card glass-card">
-          <h3>🌍 Location</h3>
-          <p>Based in Darmstadt, Germany. Originally from Nepal. Passionate about global tech collaboration and open-source.</p>
+          <div class="about-card-icon"><i class="fas fa-phone"></i></div>
+          <h3>Phone</h3>
+          <p>+(49)152-52617981</p>
+        </div>
+        <div class="about-card glass-card">
+          <div class="about-card-icon"><i class="fas fa-envelope"></i></div>
+          <h3>Email</h3>
+          <p>Amritkhadka6719@gmail.com</p>
+        </div>
+        <div class="about-card glass-card">
+          <div class="about-card-icon"><i class="fab fa-linkedin"></i></div>
+          <h3>LinkedIn</h3>
+          <p>amritkhadka04</p>
+        </div>
+        <div class="about-card glass-card">
+          <div class="about-card-icon"><i class="fab fa-github"></i></div>
+          <h3>GitHub</h3>
+          <p>Amritkc</p>
+        </div>
+        <div class="about-card glass-card">
+          <div class="about-card-icon"><i class="fas fa-language"></i></div>
+          <h3>Languages</h3>
+          <p>English (C1), German (B1), Hindi (C1), Nepali (C1), Kannada (C1)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDUCATION PANEL -->
+  <div class="section-panel" id="panel-education">
+    <button class="panel-close" aria-label="Close panel">&times;</button>
+    <div class="panel-content">
+      <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Education</h2>
+      <div class="education-timeline">
+        <div class="edu-item glass-card">
+          <div class="edu-header">
+            <div class="edu-icon"><i class="fas fa-university"></i></div>
+            <div class="edu-info">
+              <h3>Technische Universität Darmstadt</h3>
+              <span class="edu-degree">Master's Degree — Computer Science</span>
+              <span class="edu-meta"><i class="fas fa-map-marker-alt"></i> Darmstadt, Germany &nbsp;|&nbsp; <i class="fas fa-calendar"></i> 04.2024 – Current</span>
+            </div>
+          </div>
+          <div class="edu-body">
+            <h4>Relevant Coursework</h4>
+            <div class="edu-courses">
+              <span class="course-tag">Data Science and Engineering</span>
+              <span class="course-tag">Artificial Intelligence</span>
+              <span class="course-tag">Programming Analysis</span>
+              <span class="course-tag">Human Centric and Statistical Machine Learning</span>
+              <span class="course-tag">Deep Learning NLP and Architecture and Methods</span>
+              <span class="course-tag">Software Development</span>
+            </div>
+          </div>
+        </div>
+        <div class="edu-item glass-card">
+          <div class="edu-header">
+            <div class="edu-icon"><i class="fas fa-university"></i></div>
+            <div class="edu-info">
+              <h3>Bengaluru City University</h3>
+              <span class="edu-degree">Bachelor's Degree — Computer Applications</span>
+              <span class="edu-meta"><i class="fas fa-map-marker-alt"></i> Bangalore, India &nbsp;|&nbsp; <i class="fas fa-calendar"></i> 08.2018 – 05.2021</span>
+            </div>
+          </div>
+          <div class="edu-body">
+            <h4>Relevant Coursework</h4>
+            <div class="edu-courses">
+              <span class="course-tag">Data Structures and Algorithms</span>
+              <span class="course-tag">Operating Systems</span>
+              <span class="course-tag">Machine Organization and Programming</span>
+              <span class="course-tag">Artificial Intelligence</span>
+              <span class="course-tag">Mobile App Development</span>
+              <span class="course-tag">Software Engineering</span>
+              <span class="course-tag">User Experience/User Interfaces</span>
+              <span class="course-tag">Object-Oriented Programming</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -150,40 +286,75 @@
     <button class="panel-close" aria-label="Close panel">&times;</button>
     <div class="panel-content">
       <h2 class="section-title"><i class="fas fa-star"></i> Skills Constellation</h2>
-      <canvas id="skills-canvas"></canvas>
       <div class="skills-categories">
         <div class="skill-category glass-card">
-          <h3>🤖 AI / ML</h3>
+          <h3><i class="fas fa-code"></i> Programming</h3>
           <div class="skill-tags">
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">TypeScript</span>
+            <span class="skill-tag">Java</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Kotlin</span>
+            <span class="skill-tag">Swift</span>
+          </div>
+        </div>
+        <div class="skill-category glass-card">
+          <h3><i class="fas fa-layer-group"></i> Frameworks</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">React Native (React Hooks/Redux)</span>
+            <span class="skill-tag">React JS</span>
+            <span class="skill-tag">FastAPI</span>
+          </div>
+        </div>
+        <div class="skill-category glass-card">
+          <h3><i class="fas fa-robot"></i> AI/ML</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">VLLMs</span>
+            <span class="skill-tag">Transformer</span>
             <span class="skill-tag">PyTorch</span>
             <span class="skill-tag">Hugging Face</span>
             <span class="skill-tag">VLLM</span>
             <span class="skill-tag">CUDA</span>
-            <span class="skill-tag">TensorFlow</span>
             <span class="skill-tag">Computer Vision</span>
             <span class="skill-tag">NLP</span>
+            <span class="skill-tag">Deep Learning</span>
           </div>
         </div>
         <div class="skill-category glass-card">
-          <h3>💻 Languages</h3>
+          <h3><i class="fas fa-tools"></i> DevOps/Tools</h3>
           <div class="skill-tags">
-            <span class="skill-tag">Python</span>
-            <span class="skill-tag">JavaScript</span>
-            <span class="skill-tag">TypeScript</span>
-            <span class="skill-tag">Java</span>
-            <span class="skill-tag">C++</span>
-            <span class="skill-tag">SQL</span>
-          </div>
-        </div>
-        <div class="skill-category glass-card">
-          <h3>🛠️ Tools &amp; Frameworks</h3>
-          <div class="skill-tags">
-            <span class="skill-tag">React Native</span>
-            <span class="skill-tag">Node.js</span>
-            <span class="skill-tag">Docker</span>
             <span class="skill-tag">Git</span>
-            <span class="skill-tag">Linux</span>
+            <span class="skill-tag">Jenkins</span>
+            <span class="skill-tag">Kubernetes</span>
+            <span class="skill-tag">Docker</span>
             <span class="skill-tag">AWS</span>
+            <span class="skill-tag">CI/CD</span>
+          </div>
+        </div>
+        <div class="skill-category glass-card">
+          <h3><i class="fas fa-database"></i> Databases</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">PostgreSQL</span>
+            <span class="skill-tag">MongoDB</span>
+          </div>
+        </div>
+        <div class="skill-category glass-card">
+          <h3><i class="fas fa-mobile-alt"></i> Mobile</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">iOS/Android App Development</span>
+            <span class="skill-tag">Android Studio</span>
+            <span class="skill-tag">Xcode</span>
+          </div>
+        </div>
+        <div class="skill-category glass-card">
+          <h3><i class="fas fa-puzzle-piece"></i> Other</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Bitbucket</span>
+            <span class="skill-tag">JIRA</span>
+            <span class="skill-tag">Firebase (Crashlytics, FCM, Hosting)</span>
+            <span class="skill-tag">Google Play Store</span>
+            <span class="skill-tag">NPM</span>
+            <span class="skill-tag">Windows PowerShell</span>
           </div>
         </div>
       </div>
@@ -195,7 +366,25 @@
     <button class="panel-close" aria-label="Close panel">&times;</button>
     <div class="panel-content">
       <h2 class="section-title"><i class="fas fa-rocket"></i> Projects Galaxy</h2>
-      <p class="section-subtitle">Repositories fetched live from GitHub</p>
+
+      <div class="featured-projects">
+        <div class="featured-project glass-card">
+          <div class="project-header">
+            <h3><i class="fas fa-chart-line"></i> Interactive Graphical Interface for Data Preprocessing Explanations</h3>
+            <span class="project-badge">TU Darmstadt</span>
+          </div>
+          <p>Developed an interactive web interface for the PIPE-X system, enabling explainable visualization of data preprocessing pipelines in AI models. Enhanced a React + FastAPI prototype to support real-time data visualization, configurable plots, and interactive tables for pipeline exploration. Extended backend APIs for efficient pipeline variation handling and integrated dynamic visualization components for improved interpretability. Conducted a user study to assess usability and the impact of visualization on users' understanding of preprocessing effects.</p>
+        </div>
+        <div class="featured-project glass-card">
+          <div class="project-header">
+            <h3><i class="fab fa-android"></i> Nccstory — Android App</h3>
+            <span class="project-badge">10,000+ Downloads</span>
+          </div>
+          <p>Developed an Android app using Kotlin and Java. Integrated Firebase for authentication, data storage, and analytics. Implemented user profile management, community post creation, image uploading, and editing features. Achieved over 10,000 downloads on Google Play.</p>
+        </div>
+      </div>
+
+      <h3 class="section-subtitle"><i class="fab fa-github"></i> Live GitHub Repositories</h3>
       <div id="projects-container" class="projects-grid">
         <div class="loading-repos">
           <div class="spinner"></div>
@@ -211,30 +400,117 @@
     <div class="panel-content">
       <h2 class="section-title"><i class="fas fa-briefcase"></i> Experience</h2>
       <div class="timeline">
+
         <div class="timeline-item glass-card">
           <div class="timeline-marker"></div>
           <div class="timeline-content">
-            <h3>Research Assistant — UKP Lab, TU Darmstadt</h3>
-            <span class="timeline-date">2024 — Present</span>
-            <p>Working on Vision-Language Models and multimodal AI research. Developing novel approaches for visual reasoning tasks.</p>
+            <div class="exp-header" data-collapse="exp-1">
+              <div>
+                <h3>Research Assistant — UKP (Ubiquitous Knowledge Processing) LAB</h3>
+                <span class="exp-company">Darmstadt, Germany</span>
+                <span class="timeline-date"><i class="fas fa-calendar-alt"></i> 10.2025 – Current</span>
+              </div>
+              <span class="exp-toggle"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="exp-details" id="exp-1">
+              <ul>
+                <li>Designed a multimodal visual reasoning system where the LLM (Qwen-VL on VLLM) analyzes the image, decides when to call tools and executes the tool, and then re-reasons over the new visual context to produce answers</li>
+                <li>Worked with modern transformer-based and deep vision models, including Vision Transformers and CNN architectures (ResNet, EfficientNet) for visual understanding</li>
+                <li>Built the full pipeline: React frontend (image UI + chat) → FastAPI backend → CUDA-accelerated VLLM inference server</li>
+                <li>Gained hands-on experience with containerized and reproducible environments using Docker and Conda, including secure file transfer (SCP) across remote servers during deployment workflows</li>
+                <li>Integrated secure Hugging Face token authentication, model loading, and GPU cluster execution (Determined / Slurm)</li>
+              </ul>
+            </div>
           </div>
         </div>
+
         <div class="timeline-item glass-card">
           <div class="timeline-marker"></div>
           <div class="timeline-content">
-            <h3>Software Developer — Pathmate Technologies</h3>
-            <span class="timeline-date">2023 — 2024</span>
-            <p>Built health-tech solutions using React Native and Node.js. Developed patient engagement platforms.</p>
+            <div class="exp-header" data-collapse="exp-2">
+              <div>
+                <h3>Working Student (Software Developer) — Pathmate Technologies AG</h3>
+                <span class="exp-company">Mannheim, Germany</span>
+                <span class="timeline-date"><i class="fas fa-calendar-alt"></i> 11.2024 – 05.2025</span>
+              </div>
+              <span class="exp-toggle"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="exp-details" id="exp-2">
+              <ul>
+                <li>Contributed to Pathmate Coach, Ready4Life, and Food Pyramid mobile apps using React Native</li>
+                <li>Integrated server driven dynamic content loading to reduce deployment cycles</li>
+                <li>Worked with application data stored in PostgreSQL and MongoDB</li>
+                <li>Observed and supported CI/CD processes (Jenkins) for mobile application releases</li>
+                <li>Upgraded dependencies and collaborated with cross functional product teams</li>
+              </ul>
+            </div>
           </div>
         </div>
+
         <div class="timeline-item glass-card">
           <div class="timeline-marker"></div>
           <div class="timeline-content">
-            <h3>Mobile App Developer — Bloomsmobility</h3>
-            <span class="timeline-date">2022 — 2023</span>
-            <p>Developed Axis Bank UPI integration and digital payment solutions for mobile platforms.</p>
+            <div class="exp-header" data-collapse="exp-3">
+              <div>
+                <h3>Application Developer — Bloomsmobility Technologies</h3>
+                <span class="exp-company">Bangalore, India</span>
+                <span class="timeline-date"><i class="fas fa-calendar-alt"></i> 12.2021 – 05.2023</span>
+              </div>
+              <span class="exp-toggle"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="exp-details" id="exp-3">
+              <div class="sub-project">
+                <h4><i class="fas fa-arrow-right"></i> Axis Bank UPI Mobile and Web App</h4>
+                <ul>
+                  <li>Designed, developed, and maintained Axis Bank UPI mobile apps using React Native, Java, Android Studio, and Xcode across Android and iOS platforms</li>
+                  <li>Supported development teams with basic infrastructure, deployment tasks, and AWS environments</li>
+                  <li>Created software development kits (SDKs) for Android and Xcode to assist other developers with app integration in existing Android and iOS app</li>
+                  <li>Worked with React Router and Redux for state management in React Native apps and also third party library for integration features like QR Code Reader/Scanner, Screenshot and image Generation tools, Native Android/iOS bridge Connector for React Native, API integration</li>
+                  <li>Handled app crashes by using Google Firebase Crashlytics for crash analytics, fixing issues</li>
+                </ul>
+              </div>
+              <div class="sub-project">
+                <h4><i class="fas fa-arrow-right"></i> eRupee CBDC Mobile App</h4>
+                <ul>
+                  <li>Developed a complete app using React Native and Redux for state management, facilitating seamless digital currency transactions</li>
+                  <li>Created digital rupee features within the app to support CBDC transactions</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
+
+        <div class="timeline-item glass-card">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <div class="exp-header" data-collapse="exp-4">
+              <div>
+                <h3>Jr Software Developer Intern — Archick Technologies</h3>
+                <span class="exp-company">Bangalore, India</span>
+                <span class="timeline-date"><i class="fas fa-calendar-alt"></i> 03.2021 – 05.2021</span>
+              </div>
+              <span class="exp-toggle"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="exp-details" id="exp-4">
+              <div class="sub-project">
+                <h4><i class="fas fa-arrow-right"></i> HAP Daily Webapp &amp; Android App</h4>
+                <ul>
+                  <li>Developed and maintained mobile apps using React Native, Java, Android Studio, and Xcode across Android and iOS platforms</li>
+                  <li>Gained introductory exposure to AWS cloud, build, deployment, and infrastructure workflows</li>
+                  <li>Ensured synchronization between web and mobile platforms for seamless data access</li>
+                </ul>
+              </div>
+              <div class="sub-project">
+                <h4><i class="fas fa-arrow-right"></i> Repzy Webapp</h4>
+                <ul>
+                  <li>Built a web application for purchasing industrial machines</li>
+                  <li>Technologies Used: React JS, JavaScript, TypeScript, CSS3, HTML5, REST API, GitHub, Bitbucket</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -246,6 +522,11 @@
       <h2 class="section-title"><i class="fas fa-satellite-dish"></i> Contact</h2>
       <p class="section-subtitle">Send a signal across the universe</p>
       <div class="contact-grid">
+        <a href="tel:+4915252617981" class="contact-card glass-card">
+          <i class="fas fa-phone"></i>
+          <h3>Phone</h3>
+          <p>+(49)152-52617981</p>
+        </a>
         <a href="mailto:Amritkhadka6719@gmail.com" class="contact-card glass-card">
           <i class="fas fa-envelope"></i>
           <h3>Email</h3>
@@ -259,8 +540,13 @@
         <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener" class="contact-card glass-card">
           <i class="fab fa-linkedin"></i>
           <h3>LinkedIn</h3>
-          <p>Amrit Khadka</p>
+          <p>amritkhadka04</p>
         </a>
+        <div class="contact-card glass-card">
+          <i class="fas fa-map-marker-alt"></i>
+          <h3>Location</h3>
+          <p>Darmstadt, Germany</p>
+        </div>
       </div>
     </div>
   </div>
@@ -293,6 +579,7 @@
   <nav id="nav-menu">
     <button class="nav-btn" data-section="home" aria-label="Home"><i class="fas fa-home"></i><span>Home</span></button>
     <button class="nav-btn" data-section="about" aria-label="About"><i class="fas fa-user"></i><span>About</span></button>
+    <button class="nav-btn" data-section="education" aria-label="Education"><i class="fas fa-graduation-cap"></i><span>Education</span></button>
     <button class="nav-btn" data-section="skills" aria-label="Skills"><i class="fas fa-star"></i><span>Skills</span></button>
     <button class="nav-btn" data-section="projects" aria-label="Projects"><i class="fas fa-rocket"></i><span>Projects</span></button>
     <button class="nav-btn" data-section="experience" aria-label="Experience"><i class="fas fa-briefcase"></i><span>Experience</span></button>
