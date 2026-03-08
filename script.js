@@ -1,340 +1,545 @@
-/* ============================
-   Amrit Khadka — Transformer City Portfolio JS
-   ============================ */
+/* ============================================
+   Amrit Khadka — Google Maps-Style Portfolio JS
+   ============================================ */
 
 (function () {
   'use strict';
 
-  /* ---------- Neural Network Background ---------- */
-  const canvas = document.getElementById('neural-bg');
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    const PARTICLE_COUNT = 50;
-    const CONNECTION_DIST = 140;
-    const mouse = { x: -1000, y: -1000 };
+  /* ===== Constants ===== */
+  var WORLD_W = 5000;
+  var WORLD_H = 4000;
+  var MIN_ZOOM = 0.2;
+  var MAX_ZOOM = 4.0;
+  var ZOOM_SPEED = 0.15;
+  var LERP_SPEED = 0.12;
+  var BUILDING_ZOOM = 1.8;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function createParticles() {
-      particles = [];
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          radius: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.4 + 0.15,
-        });
-      }
-    }
-
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < CONNECTION_DIST) {
-            const opacity = (1 - dist / CONNECTION_DIST) * 0.12;
-            ctx.strokeStyle = 'rgba(99, 102, 241, ' + opacity + ')';
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      for (let k = 0; k < particles.length; k++) {
-        const p = particles[k];
-        const mdx = p.x - mouse.x;
-        const mdy = p.y - mouse.y;
-        const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mDist < 200) {
-          p.x += mdx * 0.008;
-          p.y += mdy * 0.008;
-        }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(139, 92, 246, ' + p.opacity + ')';
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(99, 102, 241, ' + (p.opacity * 0.08) + ')';
-        ctx.fill();
-      }
-
-      requestAnimationFrame(drawParticles);
-    }
-
-    resizeCanvas();
-    createParticles();
-    drawParticles();
-
-    window.addEventListener('resize', function () {
-      resizeCanvas();
-      createParticles();
-    });
-
-    document.addEventListener('mousemove', function (e) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
-  }
-
-  /* ---------- Cursor Glow ---------- */
-  const cursorGlow = document.getElementById('cursor-glow');
-  if (cursorGlow) {
-    document.addEventListener('mousemove', function (e) {
-      cursorGlow.style.left = e.clientX + 'px';
-      cursorGlow.style.top = e.clientY + 'px';
-    });
-  }
-
-  /* ---------- Mobile Nav Toggle ---------- */
-  const navToggle = document.getElementById('nav-toggle');
-  const mobileNav = document.getElementById('mobile-nav');
-
-  if (navToggle && mobileNav) {
-    navToggle.addEventListener('click', function () {
-      navToggle.classList.toggle('open');
-      mobileNav.classList.toggle('open');
-    });
-
-    const mobileLinks = mobileNav.querySelectorAll('a');
-    mobileLinks.forEach(function (link) {
-      link.addEventListener('click', function () {
-        navToggle.classList.remove('open');
-        mobileNav.classList.remove('open');
-      });
-    });
-  }
-
-  /* ---------- Typing Effect ---------- */
-  const typedOutput = document.getElementById('typed-output');
-  if (typedOutput) {
-    const phrases = [
-      'Building multimodal AI systems',
-      'Vision-Language Model researcher',
-      'React Native mobile engineer',
-      'Transformer architecture explorer',
-      'From UPI banking apps to VLLMs',
-      'Full-stack developer & AI enthusiast',
-    ];
-    let phraseIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    const typingSpeed = 55;
-
-    function type() {
-      const current = phrases[phraseIndex];
-      if (isDeleting) {
-        typedOutput.textContent = current.substring(0, charIndex - 1);
-        charIndex--;
-      } else {
-        typedOutput.textContent = current.substring(0, charIndex + 1);
-        charIndex++;
-      }
-
-      let delay = isDeleting ? 25 : typingSpeed;
-
-      if (!isDeleting && charIndex === current.length) {
-        delay = 2000;
-        isDeleting = true;
-      } else if (isDeleting && charIndex === 0) {
-        isDeleting = false;
-        phraseIndex = (phraseIndex + 1) % phrases.length;
-        delay = 500;
-      }
-
-      setTimeout(type, delay);
-    }
-
-    setTimeout(type, 800);
-  }
-
-  /* ---------- Counter Animation ---------- */
-  function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number');
-    counters.forEach(function (counter) {
-      const target = parseInt(counter.getAttribute('data-target'), 10);
-      if (isNaN(target)) return;
-      let current = 0;
-      const increment = Math.max(1, Math.floor(target / 40));
-      const stepTime = 50;
-
-      function update() {
-        current += increment;
-        if (current >= target) {
-          counter.textContent = target;
-          return;
-        }
-        counter.textContent = current;
-        setTimeout(update, stepTime);
-      }
-
-      update();
-    });
-  }
-
-  /* ---------- Scroll Reveal via Intersection Observer ---------- */
-  const revealObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('revealed');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -60px 0px'
-  });
-
-  document.querySelectorAll('.reveal-up').forEach(function (el) {
-    revealObserver.observe(el);
-  });
-
-  /* ---------- Stats Counter Trigger ---------- */
-  let countersAnimated = false;
-  const statsObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting && !countersAnimated) {
-        countersAnimated = true;
-        animateCounters();
-        statsObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-
-  const statsSection = document.querySelector('.hero-stats');
-  if (statsSection) {
-    statsObserver.observe(statsSection);
-  }
-
-  /* ---------- Language Bar Animation ---------- */
-  const barObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        const bars = entry.target.querySelectorAll('.bar-fill');
-        bars.forEach(function (bar) {
-          const width = bar.getAttribute('data-width');
-          if (width) {
-            bar.style.width = width + '%';
-          }
-        });
-        barObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
-
-  const langSection = document.querySelector('.lang-bars');
-  if (langSection) {
-    barObserver.observe(langSection);
-  }
-
-  /* ---------- Mini-Map Active Section Tracking ---------- */
-  const minimapNodes = document.querySelectorAll('.minimap-node');
-  const sections = document.querySelectorAll('.building-section');
-
-  const sectionObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
-
-        const sectionId = entry.target.id;
-        minimapNodes.forEach(function (node) {
-          node.classList.remove('active');
-          if (node.getAttribute('href') === '#' + sectionId) {
-            node.classList.add('active');
-          }
-        });
-      }
-    });
-  }, {
-    threshold: 0.3,
-    rootMargin: '-10% 0px -10% 0px'
-  });
-
-  sections.forEach(function (section) {
-    sectionObserver.observe(section);
-  });
-
-  /* ---------- Smooth Scroll for All Anchor Links ---------- */
-  document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
-    anchor.addEventListener('click', function (e) {
-      const targetEl = document.querySelector(this.getAttribute('href'));
-      if (targetEl) {
-        e.preventDefault();
-        targetEl.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
-
-  /* ---------- Parallax Building Entrances on Scroll ---------- */
-  const buildingEntrances = document.querySelectorAll('.building-entrance');
-
-  function updateParallax() {
-    const windowH = window.innerHeight;
-
-    buildingEntrances.forEach(function (entrance) {
-      const rect = entrance.getBoundingClientRect();
-      const centerY = rect.top + rect.height / 2;
-      const offset = (centerY - windowH / 2) / windowH;
-      const building = entrance.querySelector('.building-3d');
-      if (building) {
-        const translateY = offset * -15;
-        building.style.transform = 'translateY(' + translateY + 'px)';
-      }
-    });
-  }
-
-  let ticking = false;
-  window.addEventListener('scroll', function () {
-    if (!ticking) {
-      requestAnimationFrame(function () {
-        updateParallax();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-
-  /* ---------- Isometric City Building Click to Navigate ---------- */
-  const isoBuildings = document.querySelectorAll('.iso-building[data-building]');
-  const buildingMap = {
-    embedding: '#about',
-    positional: '#architecture',
-    attention: '#experience',
-    ffn: '#projects',
-    layernorm: '#education',
-    output: '#contact'
+  /* ===== Building positions & data ===== */
+  var buildings = {
+    hero:       { x: 2500, y: 2000, label: 'Amrit Khadka HQ' },
+    about:      { x: 900,  y: 700,  label: 'Research Lab' },
+    skills:     { x: 2500, y: 600,  label: 'Skills Factory' },
+    experience: { x: 4100, y: 700,  label: 'Experience District' },
+    projects:   { x: 4100, y: 2900, label: 'Innovation Park' },
+    education:  { x: 900,  y: 2900, label: 'University Campus' },
+    contact:    { x: 2500, y: 3400, label: 'Communication Hub' }
   };
 
-  isoBuildings.forEach(function (building) {
-    building.style.cursor = 'pointer';
-    building.addEventListener('click', function () {
-      const target = buildingMap[this.getAttribute('data-building')];
-      if (target) {
-        const el = document.querySelector(target);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+  /* ===== Search data ===== */
+  var searchItems = [
+    { section: 'hero',       icon: 'fas fa-landmark',        text: 'Amrit Khadka HQ — Home' },
+    { section: 'about',      icon: 'fas fa-user-astronaut',   text: 'About Me — Research Lab' },
+    { section: 'about',      icon: 'fas fa-flask',            text: 'UKP Lab — Vision-Language Models' },
+    { section: 'skills',     icon: 'fas fa-cogs',             text: 'Skills — Python, React Native, PyTorch' },
+    { section: 'skills',     icon: 'fas fa-robot',            text: 'AI/ML — Hugging Face, VLLM, CUDA' },
+    { section: 'experience', icon: 'fas fa-briefcase',        text: 'Experience — UKP Lab, Pathmate, Bloomsmobility' },
+    { section: 'experience', icon: 'fas fa-building',         text: 'Axis Bank UPI — Bloomsmobility' },
+    { section: 'projects',   icon: 'fas fa-rocket',           text: 'Projects — Visual Reasoning, PIPE-X' },
+    { section: 'projects',   icon: 'fas fa-coins',            text: 'eRupes CBDC — Digital Currency' },
+    { section: 'education',  icon: 'fas fa-graduation-cap',   text: 'Education — TU Darmstadt, M.Sc. CS' },
+    { section: 'education',  icon: 'fas fa-university',       text: 'Bengaluru City University — B.C.A.' },
+    { section: 'contact',    icon: 'fas fa-satellite-dish',   text: 'Contact — Email, LinkedIn, GitHub' }
+  ];
+
+  /* ===== State ===== */
+  var state = {
+    panX: 0, panY: 0, zoom: 0.5,
+    targetPanX: 0, targetPanY: 0, targetZoom: 0.5,
+    isDragging: false,
+    dragStartX: 0, dragStartY: 0,
+    dragStartPanX: 0, dragStartPanY: 0,
+    activePanel: null,
+    tilted: false,
+    animating: false,
+    touchDist: 0
+  };
+
+  /* ===== DOM Elements ===== */
+  var viewport = document.getElementById('map-viewport');
+  var world = document.getElementById('map-world');
+  var infoPanel = document.getElementById('info-panel');
+  var panelClose = document.getElementById('panel-close');
+  var searchInput = document.getElementById('search-input');
+  var searchResults = document.getElementById('search-results');
+  var zoomInBtn = document.getElementById('zoom-in-btn');
+  var zoomOutBtn = document.getElementById('zoom-out-btn');
+  var homeBtn = document.getElementById('home-btn');
+  var tiltBtn = document.getElementById('tilt-btn');
+  var zoomDisplay = document.getElementById('zoom-level-display');
+  var coordsText = document.getElementById('coords-text');
+  var zoomText = document.getElementById('zoom-text');
+  var welcomeOverlay = document.getElementById('welcome-overlay');
+  var startBtn = document.getElementById('start-btn');
+  var minimapViewport = document.getElementById('minimap-viewport');
+  var buildingEls = document.querySelectorAll('.map-building');
+  var panelSections = document.querySelectorAll('.panel-section');
+  var minimapDots = document.querySelectorAll('.minimap-dot');
+
+  /* ===== Helpers ===== */
+  function isInteractiveElement(target) {
+    return target.closest('.map-building') || target.closest('#map-controls') || target.closest('#minimap') || target.closest('#info-panel') || target.closest('#search-bar');
+  }
+
+  /* ===== Initialize ===== */
+  function init() {
+    centerOnBuilding('hero', 0.5, false);
+    requestAnimationFrame(animationLoop);
+    bindEvents();
+  }
+
+  /* ===== Center view on a building ===== */
+  function centerOnBuilding(section, zoom, animate) {
+    var b = buildings[section];
+    if (!b) return;
+    var vw = viewport.clientWidth;
+    var vh = viewport.clientHeight;
+    var z = zoom || BUILDING_ZOOM;
+
+    state.targetZoom = z;
+    state.targetPanX = vw / 2 - b.x * z;
+    state.targetPanY = vh / 2 - b.y * z;
+
+    if (!animate) {
+      state.panX = state.targetPanX;
+      state.panY = state.targetPanY;
+      state.zoom = state.targetZoom;
+    } else {
+      state.animating = true;
+      world.classList.add('animating');
+      setTimeout(function () {
+        world.classList.remove('animating');
+        state.animating = false;
+      }, 900);
+    }
+  }
+
+  /* ===== Animation Loop ===== */
+  function animationLoop() {
+    // Lerp toward target
+    state.panX += (state.targetPanX - state.panX) * LERP_SPEED;
+    state.panY += (state.targetPanY - state.panY) * LERP_SPEED;
+    state.zoom += (state.targetZoom - state.zoom) * LERP_SPEED;
+
+    // Clamp zoom
+    state.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, state.zoom));
+
+    applyTransform();
+    updateUI();
+
+    requestAnimationFrame(animationLoop);
+  }
+
+  /* ===== Apply CSS Transform ===== */
+  function applyTransform() {
+    var transform = 'translate(' + state.panX + 'px, ' + state.panY + 'px) scale(' + state.zoom + ')';
+    if (state.tilted) {
+      transform = 'perspective(2000px) rotateX(30deg) ' + transform;
+    }
+    world.style.transform = transform;
+  }
+
+  /* ===== Update UI Elements ===== */
+  function updateUI() {
+    // Zoom level display
+    zoomDisplay.textContent = state.zoom.toFixed(1) + 'x';
+    zoomText.textContent = 'Zoom: ' + state.zoom.toFixed(1) + 'x';
+
+    // Coordinates (fun fake GPS coords)
+    var viewCenterWorldX = (viewport.clientWidth / 2 - state.panX) / state.zoom;
+    var viewCenterWorldY = (viewport.clientHeight / 2 - state.panY) / state.zoom;
+    var lat = ((viewCenterWorldY / WORLD_H) * 180 - 90).toFixed(1);
+    var lon = ((viewCenterWorldX / WORLD_W) * 360 - 180).toFixed(1);
+    coordsText.textContent = Math.abs(lat) + '°' + (lat >= 0 ? 'N' : 'S') + ' ' + Math.abs(lon) + '°' + (lon >= 0 ? 'E' : 'W');
+
+    // Minimap viewport indicator
+    if (minimapViewport) {
+      var mmW = 140; // minimap width
+      var mmH = 90;  // minimap height
+      var scaleX = mmW / WORLD_W;
+      var scaleY = mmH / WORLD_H;
+
+      var vpWorldX = -state.panX / state.zoom;
+      var vpWorldY = -state.panY / state.zoom;
+      var vpWorldW = viewport.clientWidth / state.zoom;
+      var vpWorldH = viewport.clientHeight / state.zoom;
+
+      minimapViewport.style.left = (vpWorldX * scaleX) + 'px';
+      minimapViewport.style.top = (vpWorldY * scaleY) + 'px';
+      minimapViewport.style.width = (vpWorldW * scaleX) + 'px';
+      minimapViewport.style.height = (vpWorldH * scaleY) + 'px';
+    }
+  }
+
+  /* ===== Zoom to point ===== */
+  function zoomToPoint(clientX, clientY, factor) {
+    var rect = viewport.getBoundingClientRect();
+    var mouseX = clientX - rect.left;
+    var mouseY = clientY - rect.top;
+
+    // World coordinates under cursor
+    var worldX = (mouseX - state.targetPanX) / state.targetZoom;
+    var worldY = (mouseY - state.targetPanY) / state.targetZoom;
+
+    // New zoom
+    var newZoom = state.targetZoom * factor;
+    newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+
+    // Adjust pan to keep same world point under cursor
+    state.targetPanX = mouseX - worldX * newZoom;
+    state.targetPanY = mouseY - worldY * newZoom;
+    state.targetZoom = newZoom;
+  }
+
+  /* ===== Zoom from buttons (center of viewport) ===== */
+  function zoomCenter(factor) {
+    var cx = viewport.clientWidth / 2;
+    var cy = viewport.clientHeight / 2;
+    zoomToPoint(cx + viewport.getBoundingClientRect().left, cy + viewport.getBoundingClientRect().top, factor);
+  }
+
+  /* ===== Open Info Panel ===== */
+  function openPanel(section) {
+    state.activePanel = section;
+
+    // Activate panel section
+    panelSections.forEach(function (ps) {
+      ps.classList.remove('active');
+      if (ps.getAttribute('data-panel') === section) {
+        ps.classList.add('active');
       }
     });
-  });
+
+    // Highlight building
+    buildingEls.forEach(function (el) {
+      el.classList.remove('active');
+      if (el.getAttribute('data-section') === section) {
+        el.classList.add('active');
+      }
+    });
+
+    infoPanel.classList.add('open');
+
+    // Animate stats if hero panel
+    if (section === 'hero') {
+      setTimeout(animateStats, 300);
+    }
+
+    // Start typing if hero panel
+    if (section === 'hero' && !typingStarted) {
+      typingStarted = true;
+      setTimeout(startTyping, 500);
+    }
+  }
+
+  /* ===== Close Info Panel ===== */
+  function closePanel() {
+    state.activePanel = null;
+    infoPanel.classList.remove('open');
+    buildingEls.forEach(function (el) {
+      el.classList.remove('active');
+    });
+  }
+
+  /* ===== Stats Animation ===== */
+  function animateStats() {
+    var statNums = document.querySelectorAll('.stat-num');
+    statNums.forEach(function (el) {
+      var target = parseInt(el.getAttribute('data-target'), 10);
+      if (isNaN(target)) return;
+      var current = 0;
+      var increment = Math.max(1, Math.floor(target / 30));
+      function step() {
+        current += increment;
+        if (current >= target) {
+          el.textContent = target + '+';
+          return;
+        }
+        el.textContent = current;
+        setTimeout(step, 60);
+      }
+      el.textContent = '0';
+      step();
+    });
+  }
+
+  /* ===== Typing Effect ===== */
+  var typingStarted = false;
+  var typedOutput = document.getElementById('typed-output');
+  var phrases = [
+    'Building multimodal AI systems',
+    'Vision-Language Model researcher',
+    'React Native mobile engineer',
+    'Transformer architecture explorer',
+    'From UPI banking apps to VLLMs',
+    'Full-stack developer & AI enthusiast'
+  ];
+
+  function startTyping() {
+    if (!typedOutput) return;
+    var phraseIdx = 0;
+    var charIdx = 0;
+    var isDeleting = false;
+    var speed = 55;
+
+    function type() {
+      var current = phrases[phraseIdx];
+      if (isDeleting) {
+        typedOutput.textContent = current.substring(0, charIdx - 1);
+        charIdx--;
+      } else {
+        typedOutput.textContent = current.substring(0, charIdx + 1);
+        charIdx++;
+      }
+
+      var delay = isDeleting ? 25 : speed;
+      if (!isDeleting && charIdx === current.length) {
+        delay = 2000;
+        isDeleting = true;
+      } else if (isDeleting && charIdx === 0) {
+        isDeleting = false;
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+        delay = 500;
+      }
+      setTimeout(type, delay);
+    }
+    type();
+  }
+
+  /* ===== Search ===== */
+  function handleSearch(query) {
+    if (!query || query.length < 2) {
+      searchResults.classList.remove('visible');
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    var q = query.toLowerCase();
+    var matches = searchItems.filter(function (item) {
+      return item.text.toLowerCase().indexOf(q) !== -1;
+    });
+
+    if (matches.length === 0) {
+      searchResults.classList.remove('visible');
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    searchResults.innerHTML = '';
+    matches.forEach(function (m) {
+      var div = document.createElement('div');
+      div.className = 'search-result-item';
+      var icon = document.createElement('i');
+      icon.className = m.icon;
+      var span = document.createElement('span');
+      span.textContent = m.text;
+      div.appendChild(icon);
+      div.appendChild(span);
+      div.addEventListener('click', function () {
+        centerOnBuilding(m.section, BUILDING_ZOOM, true);
+        setTimeout(function () { openPanel(m.section); }, 400);
+        searchResults.classList.remove('visible');
+        searchInput.value = '';
+      });
+      searchResults.appendChild(div);
+    });
+    searchResults.classList.add('visible');
+  }
+
+  /* ===== Touch helpers ===== */
+  function getTouchDist(e) {
+    if (e.touches.length < 2) return 0;
+    var dx = e.touches[0].clientX - e.touches[1].clientX;
+    var dy = e.touches[0].clientY - e.touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function getTouchCenter(e) {
+    if (e.touches.length < 2) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    return {
+      x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+      y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+    };
+  }
+
+  /* ===== Event Bindings ===== */
+  function bindEvents() {
+    // Welcome overlay
+    startBtn.addEventListener('click', function () {
+      welcomeOverlay.classList.add('hidden');
+      setTimeout(function () {
+        welcomeOverlay.style.display = 'none';
+      }, 800);
+    });
+
+    // Mouse wheel zoom
+    viewport.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var factor = e.deltaY < 0 ? (1 + ZOOM_SPEED) : (1 - ZOOM_SPEED);
+      zoomToPoint(e.clientX, e.clientY, factor);
+    }, { passive: false });
+
+    // Mouse drag to pan
+    viewport.addEventListener('mousedown', function (e) {
+      if (isInteractiveElement(e.target)) return;
+      state.isDragging = true;
+      state.dragStartX = e.clientX;
+      state.dragStartY = e.clientY;
+      state.dragStartPanX = state.targetPanX;
+      state.dragStartPanY = state.targetPanY;
+      viewport.classList.add('dragging');
+    });
+
+    window.addEventListener('mousemove', function (e) {
+      if (!state.isDragging) return;
+      var dx = e.clientX - state.dragStartX;
+      var dy = e.clientY - state.dragStartY;
+      state.targetPanX = state.dragStartPanX + dx;
+      state.targetPanY = state.dragStartPanY + dy;
+    });
+
+    window.addEventListener('mouseup', function () {
+      state.isDragging = false;
+      viewport.classList.remove('dragging');
+    });
+
+    // Touch events
+    viewport.addEventListener('touchstart', function (e) {
+      if (isInteractiveElement(e.target)) return;
+
+      if (e.touches.length === 1) {
+        state.isDragging = true;
+        state.dragStartX = e.touches[0].clientX;
+        state.dragStartY = e.touches[0].clientY;
+        state.dragStartPanX = state.targetPanX;
+        state.dragStartPanY = state.targetPanY;
+      }
+      if (e.touches.length === 2) {
+        state.isDragging = false;
+        state.touchDist = getTouchDist(e);
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+      if (e.touches.length === 1 && state.isDragging) {
+        var dx = e.touches[0].clientX - state.dragStartX;
+        var dy = e.touches[0].clientY - state.dragStartY;
+        state.targetPanX = state.dragStartPanX + dx;
+        state.targetPanY = state.dragStartPanY + dy;
+      }
+      if (e.touches.length === 2) {
+        var newDist = getTouchDist(e);
+        if (state.touchDist > 0) {
+          var factor = newDist / state.touchDist;
+          var center = getTouchCenter(e);
+          zoomToPoint(center.x, center.y, factor);
+        }
+        state.touchDist = newDist;
+      }
+    }, { passive: false });
+
+    viewport.addEventListener('touchend', function () {
+      state.isDragging = false;
+      state.touchDist = 0;
+    });
+
+    // Building clicks
+    buildingEls.forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var section = el.getAttribute('data-section');
+        centerOnBuilding(section, BUILDING_ZOOM, true);
+        setTimeout(function () {
+          openPanel(section);
+        }, 400);
+      });
+
+      // Hover cursor change
+      el.addEventListener('mouseenter', function () {
+        viewport.classList.add('building-hover');
+      });
+      el.addEventListener('mouseleave', function () {
+        viewport.classList.remove('building-hover');
+      });
+    });
+
+    // Panel close
+    panelClose.addEventListener('click', closePanel);
+
+    // Click outside panel to close
+    viewport.addEventListener('click', function (e) {
+      if (state.activePanel && !e.target.closest('.map-building') && !e.target.closest('#info-panel')) {
+        closePanel();
+      }
+    });
+
+    // Zoom controls
+    zoomInBtn.addEventListener('click', function () { zoomCenter(1 + ZOOM_SPEED * 2); });
+    zoomOutBtn.addEventListener('click', function () { zoomCenter(1 - ZOOM_SPEED * 2); });
+
+    // Home button
+    homeBtn.addEventListener('click', function () {
+      closePanel();
+      centerOnBuilding('hero', 0.5, true);
+    });
+
+    // Tilt toggle
+    tiltBtn.addEventListener('click', function () {
+      state.tilted = !state.tilted;
+      tiltBtn.style.color = state.tilted ? 'var(--accent)' : '';
+      world.classList.toggle('tilted', state.tilted);
+    });
+
+    // Search
+    searchInput.addEventListener('input', function () {
+      handleSearch(this.value);
+    });
+    searchInput.addEventListener('focus', function () {
+      if (this.value.length >= 2) handleSearch(this.value);
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#search-bar')) {
+        searchResults.classList.remove('visible');
+      }
+    });
+
+    // Minimap dot clicks
+    minimapDots.forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        var target = dot.getAttribute('data-target');
+        centerOnBuilding(target, BUILDING_ZOOM, true);
+        setTimeout(function () { openPanel(target); }, 400);
+      });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function (e) {
+      if (e.target.tagName === 'INPUT') return;
+
+      if (e.key === 'Escape') {
+        closePanel();
+      }
+      if (e.key === '+' || e.key === '=') {
+        zoomCenter(1 + ZOOM_SPEED * 2);
+      }
+      if (e.key === '-') {
+        zoomCenter(1 - ZOOM_SPEED * 2);
+      }
+      if (e.key === 'h' || e.key === 'H') {
+        closePanel();
+        centerOnBuilding('hero', 0.5, true);
+      }
+    });
+
+    // Resize handler
+    window.addEventListener('resize', function () {
+      // Re-center if needed
+    });
+  }
+
+  /* ===== Start ===== */
+  init();
 
 })();

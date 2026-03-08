@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Amrit Khadka — AI &amp; Software Engineer</title>
-  <meta name="description" content="Portfolio of Amrit Khadka – MS CS @ TU Darmstadt. AI research &amp; full-stack dev exploring Transformer architecture." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+  <title>Amrit Khadka — Interactive World Map Portfolio</title>
+  <meta name="description" content="Explore the world of Amrit Khadka — AI researcher & software engineer. Navigate a Google Maps-style 3D interactive portfolio." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -14,165 +14,279 @@
 </head>
 <body>
 
-  <!-- Neural Network Background -->
-  <canvas id="neural-bg"></canvas>
-  <div id="cursor-glow"></div>
-
-  <!-- Mini-map / Progress Indicator -->
-  <nav id="minimap" aria-label="Section navigator">
-    <div class="minimap-track">
-      <a href="#hero" class="minimap-node active" data-label="Skyline"><span></span></a>
-      <a href="#about" class="minimap-node" data-label="Embedding"><span></span></a>
-      <a href="#architecture" class="minimap-node" data-label="Positional"><span></span></a>
-      <a href="#experience" class="minimap-node" data-label="Attention"><span></span></a>
-      <a href="#projects" class="minimap-node" data-label="FFN"><span></span></a>
-      <a href="#education" class="minimap-node" data-label="LayerNorm"><span></span></a>
-      <a href="#contact" class="minimap-node" data-label="Output"><span></span></a>
+  <!-- ==================== WELCOME OVERLAY ==================== -->
+  <div id="welcome-overlay">
+    <div class="welcome-content">
+      <div class="welcome-globe">
+        <div class="globe-ring r1"></div>
+        <div class="globe-ring r2"></div>
+        <div class="globe-ring r3"></div>
+        <div class="globe-dot"></div>
+      </div>
+      <h1>Welcome to <span class="gradient-text">Amrit's World</span></h1>
+      <p class="welcome-sub">AI &amp; Software Engineer — MS CS @ TU Darmstadt</p>
+      <p class="welcome-hint">Navigate a 3D interactive map to explore my journey</p>
+      <div class="welcome-instructions">
+        <div class="instr"><i class="fas fa-mouse"></i><span>Scroll to zoom</span></div>
+        <div class="instr"><i class="fas fa-hand-pointer"></i><span>Drag to pan</span></div>
+        <div class="instr"><i class="fas fa-building"></i><span>Click buildings to explore</span></div>
+      </div>
+      <button id="start-btn" class="btn-start">
+        <i class="fas fa-map-marked-alt"></i> Start Exploring
+      </button>
     </div>
-  </nav>
+  </div>
 
-  <!-- Mobile Nav Toggle -->
-  <button id="nav-toggle" aria-label="Toggle navigation">
-    <span></span><span></span><span></span>
-  </button>
-
-  <!-- Mobile Nav Menu -->
-  <nav id="mobile-nav" class="mobile-nav">
-    <a href="#hero">Skyline</a>
-    <a href="#about">Embedding Tower</a>
-    <a href="#architecture">Positional Spire</a>
-    <a href="#experience">Attention Complex</a>
-    <a href="#projects">FFN Hub</a>
-    <a href="#education">LayerNorm</a>
-    <a href="#contact">Output Tower</a>
-  </nav>
-
-  <!-- ============================================
-       SECTION 1: HERO / SKYLINE
-       ============================================ -->
-  <section id="hero" class="building-section">
-    <div class="city-skyline">
-      <div class="isometric-city">
-        <div class="iso-building b1" data-building="embedding">
-          <div class="iso-face iso-top"></div>
-          <div class="iso-face iso-left"></div>
-          <div class="iso-face iso-right"></div>
-          <div class="iso-label">Embedding</div>
-        </div>
-        <div class="iso-building b2" data-building="positional">
-          <div class="iso-face iso-top"></div>
-          <div class="iso-face iso-left"></div>
-          <div class="iso-face iso-right"></div>
-          <div class="iso-label">Positional</div>
-        </div>
-        <div class="iso-building b3" data-building="attention">
-          <div class="iso-face iso-top"></div>
-          <div class="iso-face iso-left"></div>
-          <div class="iso-face iso-right"></div>
-          <div class="iso-label">Attention</div>
-        </div>
-        <div class="iso-building b4" data-building="ffn">
-          <div class="iso-face iso-top"></div>
-          <div class="iso-face iso-left"></div>
-          <div class="iso-face iso-right"></div>
-          <div class="iso-label">FFN</div>
-        </div>
-        <div class="iso-building b5" data-building="layernorm">
-          <div class="iso-face iso-top"></div>
-          <div class="iso-face iso-left"></div>
-          <div class="iso-face iso-right"></div>
-          <div class="iso-label">LayerNorm</div>
-        </div>
-        <div class="iso-building b6" data-building="output">
-          <div class="iso-face iso-top"></div>
-          <div class="iso-face iso-left"></div>
-          <div class="iso-face iso-right"></div>
-          <div class="iso-label">Output</div>
-        </div>
-        <!-- Data flow lines -->
-        <svg class="data-flow-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
-          <path class="data-flow-path" d="M50,150 C150,50 200,100 300,80 S450,120 550,60" />
-        </svg>
-      </div>
+  <!-- ==================== SEARCH BAR ==================== -->
+  <div id="search-bar">
+    <div class="search-inner">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="Search Amrit's World..." autocomplete="off" />
     </div>
+    <div id="search-results"></div>
+  </div>
 
-    <div class="hero-overlay">
-      <div class="hero-badge">
-        <i class="fas fa-microchip"></i>
-        <span>AI &amp; Software Engineer</span>
-      </div>
-      <h1 class="hero-title">
-        <span class="line">Welcome to the</span>
-        <span class="line name-line"><span class="gradient-text">Transformer City</span></span>
-      </h1>
-      <div class="hero-typed-wrapper">
-        <span class="typed-prefix">&gt; </span>
-        <span id="typed-output" class="typed-output"></span>
-        <span class="typed-cursor">|</span>
-      </div>
-      <p class="hero-description">
-        I'm <strong>Amrit Khadka</strong> — Master's student in Computer Science at <strong>TU Darmstadt</strong>.
-        Scroll down to explore each building block of the Transformer architecture, and discover my journey through AI research, mobile engineering, and full-stack development.
-      </p>
-      <div class="hero-cta">
-        <a href="#about" class="btn btn-primary"><i class="fas fa-building"></i> Enter the City</a>
-        <a href="#contact" class="btn btn-outline"><i class="fas fa-paper-plane"></i> Get In Touch</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-number" data-target="4">0</span><span class="stat-plus">+</span>
-          <span class="stat-label">Years Exp</span>
+  <!-- ==================== MAP VIEWPORT ==================== -->
+  <div id="map-viewport">
+    <div id="map-world">
+
+      <!-- Terrain Grid -->
+      <div id="terrain"></div>
+
+      <!-- Roads SVG -->
+      <svg id="roads" viewBox="0 0 5000 4000" preserveAspectRatio="none">
+        <!-- Main roads from center to each building -->
+        <line x1="2500" y1="2000" x2="900" y2="700" class="road main-road" />
+        <line x1="2500" y1="2000" x2="2500" y2="600" class="road main-road" />
+        <line x1="2500" y1="2000" x2="4100" y2="700" class="road main-road" />
+        <line x1="2500" y1="2000" x2="4100" y2="2900" class="road main-road" />
+        <line x1="2500" y1="2000" x2="900" y2="2900" class="road main-road" />
+        <line x1="2500" y1="2000" x2="2500" y2="3400" class="road main-road" />
+        <!-- Ring road -->
+        <path d="M 900,700 Q 1700,300 2500,600 Q 3300,300 4100,700 Q 4500,1800 4100,2900 Q 3300,3500 2500,3400 Q 1700,3500 900,2900 Q 500,1800 900,700 Z" class="road ring-road" fill="none" />
+        <!-- Decorative paths -->
+        <circle cx="2500" cy="2000" r="300" class="road-circle" fill="none" />
+        <circle cx="2500" cy="2000" r="150" class="road-circle-inner" fill="none" />
+      </svg>
+
+      <!-- Decorative Elements -->
+      <div class="map-decoration tree-cluster" style="left:1700px;top:1200px;">🌳🌲🌳</div>
+      <div class="map-decoration tree-cluster" style="left:3200px;top:1500px;">🌲🌳🌲</div>
+      <div class="map-decoration tree-cluster" style="left:1800px;top:2800px;">🌳🌲</div>
+      <div class="map-decoration tree-cluster" style="left:3400px;top:2500px;">🌲🌳🌲</div>
+      <div class="map-decoration tree-cluster" style="left:600px;top:1800px;">🌳🌲🌳🌲</div>
+      <div class="map-decoration tree-cluster" style="left:4300px;top:1800px;">🌲🌳🌲</div>
+      <div class="map-decoration pond" style="left:2000px;top:1400px;"></div>
+      <div class="map-decoration pond" style="left:3100px;top:2200px;"></div>
+      <div class="map-decoration park" style="left:1400px;top:2400px;"></div>
+
+      <!-- ===== BUILDING: HQ (Center) ===== -->
+      <div class="map-building hq-building" data-section="hero" style="left:2500px;top:2000px;">
+        <div class="building-shadow"></div>
+        <div class="building-3d hq">
+          <div class="b-face b-front"></div>
+          <div class="b-face b-right"></div>
+          <div class="b-face b-top"></div>
+          <div class="b-windows"></div>
+          <div class="b-antenna"></div>
         </div>
-        <div class="stat">
-          <span class="stat-number" data-target="10">0</span><span class="stat-plus">+</span>
-          <span class="stat-label">Projects</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number" data-target="10">0</span><span class="stat-plus">K+</span>
-          <span class="stat-label">App Downloads</span>
+        <div class="building-pulse"></div>
+        <div class="building-label">
+          <div class="label-icon"><i class="fas fa-landmark"></i></div>
+          <span>Amrit Khadka HQ</span>
         </div>
       </div>
+
+      <!-- ===== BUILDING: About Me ===== -->
+      <div class="map-building" data-section="about" style="left:900px;top:700px;">
+        <div class="building-shadow"></div>
+        <div class="building-3d about">
+          <div class="b-face b-front"></div>
+          <div class="b-face b-right"></div>
+          <div class="b-face b-top"></div>
+          <div class="b-windows"></div>
+        </div>
+        <div class="building-pulse"></div>
+        <div class="building-label">
+          <div class="label-icon"><i class="fas fa-user-astronaut"></i></div>
+          <span>Research Lab</span>
+        </div>
+      </div>
+
+      <!-- ===== BUILDING: Skills ===== -->
+      <div class="map-building" data-section="skills" style="left:2500px;top:600px;">
+        <div class="building-shadow"></div>
+        <div class="building-3d skills">
+          <div class="b-face b-front"></div>
+          <div class="b-face b-right"></div>
+          <div class="b-face b-top"></div>
+          <div class="b-windows"></div>
+        </div>
+        <div class="building-pulse"></div>
+        <div class="building-label">
+          <div class="label-icon"><i class="fas fa-cogs"></i></div>
+          <span>Skills Factory</span>
+        </div>
+      </div>
+
+      <!-- ===== BUILDING: Experience ===== -->
+      <div class="map-building" data-section="experience" style="left:4100px;top:700px;">
+        <div class="building-shadow"></div>
+        <div class="building-3d experience">
+          <div class="b-face b-front"></div>
+          <div class="b-face b-right"></div>
+          <div class="b-face b-top"></div>
+          <div class="b-windows"></div>
+        </div>
+        <div class="building-pulse"></div>
+        <div class="building-label">
+          <div class="label-icon"><i class="fas fa-briefcase"></i></div>
+          <span>Experience District</span>
+        </div>
+      </div>
+
+      <!-- ===== BUILDING: Projects ===== -->
+      <div class="map-building" data-section="projects" style="left:4100px;top:2900px;">
+        <div class="building-shadow"></div>
+        <div class="building-3d projects">
+          <div class="b-face b-front"></div>
+          <div class="b-face b-right"></div>
+          <div class="b-face b-top"></div>
+          <div class="b-windows"></div>
+        </div>
+        <div class="building-pulse"></div>
+        <div class="building-label">
+          <div class="label-icon"><i class="fas fa-rocket"></i></div>
+          <span>Innovation Park</span>
+        </div>
+      </div>
+
+      <!-- ===== BUILDING: Education ===== -->
+      <div class="map-building" data-section="education" style="left:900px;top:2900px;">
+        <div class="building-shadow"></div>
+        <div class="building-3d education">
+          <div class="b-face b-front"></div>
+          <div class="b-face b-right"></div>
+          <div class="b-face b-top"></div>
+          <div class="b-windows"></div>
+        </div>
+        <div class="building-pulse"></div>
+        <div class="building-label">
+          <div class="label-icon"><i class="fas fa-graduation-cap"></i></div>
+          <span>University Campus</span>
+        </div>
+      </div>
+
+      <!-- ===== BUILDING: Contact ===== -->
+      <div class="map-building" data-section="contact" style="left:2500px;top:3400px;">
+        <div class="building-shadow"></div>
+        <div class="building-3d contact">
+          <div class="b-face b-front"></div>
+          <div class="b-face b-right"></div>
+          <div class="b-face b-top"></div>
+          <div class="b-windows"></div>
+        </div>
+        <div class="building-pulse"></div>
+        <div class="building-label">
+          <div class="label-icon"><i class="fas fa-satellite-dish"></i></div>
+          <span>Communication Hub</span>
+        </div>
+      </div>
+
     </div>
-    <a href="#about" class="scroll-indicator" aria-label="Scroll down">
-      <div class="scroll-arrow"></div>
-      <span>Dive In</span>
-    </a>
-  </section>
+  </div>
 
-  <!-- ============================================
-       SECTION 2: INPUT EMBEDDING TOWER → About Me
-       ============================================ -->
-  <section id="about" class="building-section">
-    <div class="building-entrance">
-      <div class="building-3d embedding-tower">
-        <div class="building-body">
-          <div class="b3d-top"></div>
-          <div class="b3d-left"></div>
-          <div class="b3d-right"></div>
-          <div class="b3d-front"></div>
+  <!-- ==================== MAP CONTROLS ==================== -->
+  <div id="map-controls">
+    <button id="zoom-in-btn" title="Zoom in"><i class="fas fa-plus"></i></button>
+    <div id="zoom-level-display">1.0x</div>
+    <button id="zoom-out-btn" title="Zoom out"><i class="fas fa-minus"></i></button>
+    <div class="controls-divider"></div>
+    <button id="home-btn" title="Reset view"><i class="fas fa-home"></i></button>
+    <button id="tilt-btn" title="Toggle 3D tilt"><i class="fas fa-cube"></i></button>
+  </div>
+
+  <!-- ==================== MINIMAP ==================== -->
+  <div id="minimap">
+    <div id="minimap-viewport"></div>
+    <div class="minimap-dot" data-target="hero" style="left:50%;top:50%;"></div>
+    <div class="minimap-dot" data-target="about" style="left:18%;top:17%;"></div>
+    <div class="minimap-dot" data-target="skills" style="left:50%;top:15%;"></div>
+    <div class="minimap-dot" data-target="experience" style="left:82%;top:17%;"></div>
+    <div class="minimap-dot" data-target="projects" style="left:82%;top:72%;"></div>
+    <div class="minimap-dot" data-target="education" style="left:18%;top:72%;"></div>
+    <div class="minimap-dot" data-target="contact" style="left:50%;top:85%;"></div>
+  </div>
+
+  <!-- ==================== COORDINATES DISPLAY ==================== -->
+  <div id="coords-display">
+    <span id="coords-text">0°N 0°E</span>
+    <span id="zoom-text">Zoom: 1.0x</span>
+  </div>
+
+  <!-- ==================== INFO PANEL ==================== -->
+  <div id="info-panel">
+    <button id="panel-close"><i class="fas fa-times"></i></button>
+    <div id="panel-content">
+
+      <!-- HERO PANEL -->
+      <div class="panel-section" data-panel="hero">
+        <div class="panel-header hero-gradient">
+          <div class="panel-icon"><i class="fas fa-landmark"></i></div>
+          <h2>Amrit Khadka HQ</h2>
+          <span class="panel-tag">Headquarters</span>
         </div>
-        <div class="building-icon"><i class="fas fa-cube"></i></div>
+        <div class="panel-body">
+          <div class="hero-card">
+            <div class="hero-name-big">Amrit Khadka</div>
+            <div class="hero-role">AI &amp; Software Engineer</div>
+            <div class="hero-typed-wrapper">
+              <span class="typed-prefix">&gt; </span>
+              <span id="typed-output" class="typed-output"></span>
+              <span class="typed-cursor">|</span>
+            </div>
+            <p class="hero-desc">Master's student in Computer Science at <strong>TU Darmstadt</strong>, Germany. Building the future at the intersection of AI research and software engineering.</p>
+          </div>
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="stat-num" data-target="4">0</div>
+              <div class="stat-label">Years Exp</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" data-target="10">0</div>
+              <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" data-target="10">0</div>
+              <div class="stat-label">K+ Downloads</div>
+            </div>
+          </div>
+          <div class="quick-links">
+            <a href="mailto:Amritkhadka6719@gmail.com" class="qlink"><i class="fas fa-envelope"></i> Email</a>
+            <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer" class="qlink"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer" class="qlink"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </div>
       </div>
-      <div class="building-header">
-        <span class="building-tag">Layer 1</span>
-        <h2 class="section-title">Input Embedding Tower</h2>
-        <p class="section-subtitle">About Me — Converting Raw Data into Meaning</p>
-      </div>
-    </div>
 
-    <div class="building-interior reveal-up">
-      <div class="content-split">
-        <div class="content-main">
-          <div class="about-card glass-card">
+      <!-- ABOUT PANEL -->
+      <div class="panel-section" data-panel="about">
+        <div class="panel-header about-gradient">
+          <div class="panel-icon"><i class="fas fa-user-astronaut"></i></div>
+          <h2>Research Lab</h2>
+          <span class="panel-tag">About Me</span>
+        </div>
+        <div class="panel-body">
+          <div class="info-card">
             <h3><i class="fas fa-user-astronaut"></i> Who I Am</h3>
-            <p>I'm <strong>Amrit Khadka</strong>, a Master's student in Computer Science at <strong>TU Darmstadt</strong>, Germany. Just as input embeddings transform raw tokens into dense, meaningful vectors, I transform complex problems into elegant solutions.</p>
-            <p>I've built production apps that serve thousands of users — from <strong>UPI banking apps</strong> for Axis Bank to <strong>digital currency platforms</strong> (eRupes CBDC) and <strong>health-tech platforms</strong>. My current passion lies at the intersection of AI research and software engineering.</p>
+            <p>I'm <strong>Amrit Khadka</strong>, a Master's student in Computer Science at <strong>TU Darmstadt</strong>, Germany. I transform complex problems into elegant solutions.</p>
+            <p>I've built production apps that serve thousands of users — from <strong>UPI banking apps</strong> for Axis Bank to <strong>digital currency platforms</strong> (eRupes CBDC) and <strong>health-tech platforms</strong>.</p>
           </div>
-          <div class="about-card glass-card">
+          <div class="info-card">
             <h3><i class="fas fa-flask"></i> Current Focus</h3>
-            <p>At the <strong>UKP Lab</strong> (TU Darmstadt), I research <strong>Vision-Language Models</strong> and transformer architectures. I work with models like Qwen-VL on VLLM, building multimodal visual reasoning systems that push the boundaries of AI understanding.</p>
+            <p>At the <strong>UKP Lab</strong> (TU Darmstadt), I research <strong>Vision-Language Models</strong> and transformer architectures. I work with models like Qwen-VL on VLLM, building multimodal visual reasoning systems.</p>
           </div>
-          <div class="skills-pills">
+          <div class="pills-row">
             <span class="pill">React Native</span>
             <span class="pill">JavaScript / TypeScript</span>
             <span class="pill">Kotlin</span>
@@ -184,387 +298,212 @@
             <span class="pill">Docker</span>
           </div>
         </div>
-        <div class="content-llm">
-          <div class="llm-explainer glass-card">
-            <div class="llm-badge"><i class="fas fa-brain"></i> Transformer Insight</div>
-            <h4>What are Input Embeddings?</h4>
-            <p>In transformers, <strong>input embeddings</strong> convert discrete tokens (words, subwords) into continuous dense vectors. This is the first step in the transformer pipeline:</p>
-            <ul>
-              <li><strong>Tokenization</strong> — Text is split into subword tokens using BPE, WordPiece, or SentencePiece</li>
-              <li><strong>Vocabulary Lookup</strong> — Each token maps to an index in a learned vocabulary (typically 30K–100K tokens)</li>
-              <li><strong>Dense Vectors</strong> — The embedding layer projects each index into a d-dimensional space (e.g., 768 or 4096 dimensions)</li>
-            </ul>
-            <div class="code-snippet">
-              <code>embedding = nn.Embedding(vocab_size, d_model)</code>
-              <code>x = embedding(token_ids)  # [batch, seq_len, d_model]</code>
+      </div>
+
+      <!-- SKILLS PANEL -->
+      <div class="panel-section" data-panel="skills">
+        <div class="panel-header skills-gradient">
+          <div class="panel-icon"><i class="fas fa-cogs"></i></div>
+          <h2>Skills Factory</h2>
+          <span class="panel-tag">Technical Skills</span>
+        </div>
+        <div class="panel-body">
+          <div class="skill-group">
+            <h4><i class="fas fa-robot"></i> AI / ML</h4>
+            <div class="skill-chips">
+              <span>PyTorch</span><span>Hugging Face</span><span>VLLM</span><span>Vision Transformers</span><span>CNNs</span><span>NLP</span><span>CUDA</span>
             </div>
-            <p class="llm-connection"><i class="fas fa-link"></i> Just as embeddings encode meaning from raw text, this section encodes who I am from my raw experiences.</p>
+          </div>
+          <div class="skill-group">
+            <h4><i class="fas fa-code"></i> Languages</h4>
+            <div class="skill-chips">
+              <span>Python</span><span>JavaScript</span><span>TypeScript</span><span>Kotlin</span><span>Swift</span><span>Java</span><span>SQL</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4><i class="fas fa-layer-group"></i> Frameworks</h4>
+            <div class="skill-chips">
+              <span>React</span><span>React Native</span><span>FastAPI</span><span>Node.js</span><span>Next.js</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4><i class="fas fa-server"></i> DevOps</h4>
+            <div class="skill-chips">
+              <span>Docker</span><span>Kubernetes</span><span>Jenkins</span><span>Git</span><span>Slurm</span><span>Conda</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4><i class="fas fa-database"></i> Databases</h4>
+            <div class="skill-chips">
+              <span>PostgreSQL</span><span>MongoDB</span><span>Redis</span><span>Firebase</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4><i class="fas fa-mobile-alt"></i> Mobile</h4>
+            <div class="skill-chips">
+              <span>React Native</span><span>Android (Kotlin)</span><span>iOS (Swift)</span><span>Expo</span>
+            </div>
+          </div>
+          <div class="info-card" style="margin-top:1rem;">
+            <h3><i class="fas fa-globe"></i> Spoken Languages</h3>
+            <div class="lang-bar-list">
+              <div class="lang-item"><span class="lang-name">English</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
+              <div class="lang-item"><span class="lang-name">German</span><span class="lang-level">B1</span><div class="lang-track"><div class="lang-fill" style="width:50%"></div></div></div>
+              <div class="lang-item"><span class="lang-name">Hindi</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
+              <div class="lang-item"><span class="lang-name">Nepali</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
+              <div class="lang-item"><span class="lang-name">Kannada</span><span class="lang-level">C1</span><div class="lang-track"><div class="lang-fill" style="width:90%"></div></div></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ============================================
-       SECTION 3: POSITIONAL ENCODING SPIRE → LLM Architecture
-       ============================================ -->
-  <section id="architecture" class="building-section">
-    <div class="building-entrance">
-      <div class="building-3d positional-spire">
-        <div class="building-body">
-          <div class="b3d-top"></div>
-          <div class="b3d-left"></div>
-          <div class="b3d-right"></div>
-          <div class="b3d-front"></div>
+      <!-- EXPERIENCE PANEL -->
+      <div class="panel-section" data-panel="experience">
+        <div class="panel-header exp-gradient">
+          <div class="panel-icon"><i class="fas fa-briefcase"></i></div>
+          <h2>Experience District</h2>
+          <span class="panel-tag">Work Experience</span>
         </div>
-        <div class="building-icon"><i class="fas fa-wave-square"></i></div>
-      </div>
-      <div class="building-header">
-        <span class="building-tag">Layer 2</span>
-        <h2 class="section-title">Positional Encoding Spire</h2>
-        <p class="section-subtitle">LLM Architecture Deep Dive — Order Matters</p>
-      </div>
-    </div>
-
-    <div class="building-interior reveal-up">
-      <div class="content-split">
-        <div class="content-main">
-          <div class="arch-grid">
-            <div class="arch-card glass-card">
-              <div class="arch-icon"><i class="fas fa-sine-wave"></i></div>
-              <h4>Sinusoidal Encoding</h4>
-              <p>The original "Attention Is All You Need" paper used fixed sinusoidal functions: <em>PE(pos, 2i) = sin(pos / 10000^(2i/d))</em>. These create unique position signatures using different frequency waves, allowing the model to learn relative positions.</p>
-            </div>
-            <div class="arch-card glass-card">
-              <div class="arch-icon"><i class="fas fa-graduation-cap"></i></div>
-              <h4>Learned Positional Embeddings</h4>
-              <p>Models like BERT and GPT-2 use <strong>learned positional embeddings</strong> — trainable vectors for each position. Simple but limited to a fixed context length seen during training.</p>
-            </div>
-            <div class="arch-card glass-card">
-              <div class="arch-icon"><i class="fas fa-rotate"></i></div>
-              <h4>RoPE (Rotary Position Embedding)</h4>
-              <p>Modern LLMs like LLaMA use <strong>Rotary Position Embeddings</strong> that encode position by rotating the query and key vectors. RoPE naturally captures relative positions and can extrapolate to longer sequences.</p>
-            </div>
-            <div class="arch-card glass-card">
-              <div class="arch-icon"><i class="fas fa-arrows-left-right"></i></div>
-              <h4>Why Position Matters</h4>
-              <p>Unlike RNNs, transformers process all tokens in parallel — they have no inherent sense of order. Without positional encoding, "The cat sat on the mat" and "mat the on sat cat The" would be identical.</p>
-            </div>
-          </div>
-          <div class="research-connection glass-card">
-            <h4><i class="fas fa-microscope"></i> My Research Connection</h4>
-            <p>At the <strong>UKP Lab</strong>, I work directly with these architectural choices. When fine-tuning <strong>Qwen-VL</strong> for visual reasoning, understanding how positional encodings interact with vision tokens versus text tokens is critical for multimodal alignment.</p>
-          </div>
-        </div>
-        <div class="content-llm">
-          <div class="llm-explainer glass-card">
-            <div class="llm-badge"><i class="fas fa-brain"></i> Transformer Insight</div>
-            <h4>How Positional Encoding Works</h4>
-            <p>Positional encoding adds position information to the embedding vectors, so the model knows <em>where</em> each token is in the sequence:</p>
-            <div class="code-snippet">
-              <code>x = token_embedding + positional_encoding</code>
-              <code># Shape: [batch, seq_len, d_model]</code>
-            </div>
-            <p>The key insight: by using sinusoidal functions at different frequencies, the model can attend to relative positions. For position <em>p</em> and dimension <em>i</em>:</p>
-            <div class="formula">
-              PE(p, 2i) = sin(p / 10000<sup>2i/d</sup>)<br/>
-              PE(p, 2i+1) = cos(p / 10000<sup>2i/d</sup>)
-            </div>
-            <p class="llm-connection"><i class="fas fa-link"></i> Just as positional encoding tells the model where each token sits, this section gives context and order to the architectural concepts.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================
-       SECTION 4: MULTI-HEAD ATTENTION COMPLEX → Experience
-       ============================================ -->
-  <section id="experience" class="building-section">
-    <div class="building-entrance">
-      <div class="building-3d attention-complex">
-        <div class="building-body">
-          <div class="b3d-top"></div>
-          <div class="b3d-left"></div>
-          <div class="b3d-right"></div>
-          <div class="b3d-front"></div>
-        </div>
-        <div class="building-icon"><i class="fas fa-eye"></i></div>
-      </div>
-      <div class="building-header">
-        <span class="building-tag">Layer 3</span>
-        <h2 class="section-title">Multi-Head Attention Complex</h2>
-        <p class="section-subtitle">Experience — Attending to What Matters Most</p>
-      </div>
-    </div>
-
-    <div class="building-interior reveal-up">
-      <div class="content-split">
-        <div class="content-main">
+        <div class="panel-body">
           <div class="timeline">
-            <div class="timeline-item">
-              <div class="timeline-marker"></div>
-              <div class="timeline-content glass-card">
-                <div class="timeline-header">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-header">
                   <h4>Research Assistant — UKP Lab, TU Darmstadt</h4>
-                  <span class="timeline-date">Oct 2025 – Present</span>
+                  <span class="tl-date">Oct 2025 – Present</span>
                 </div>
                 <ul>
-                  <li>Multimodal visual reasoning with <strong>Qwen-VL</strong> on VLLM infrastructure</li>
-                  <li>Working with Vision Transformers (ViT) and CNN architectures</li>
-                  <li>Building React → FastAPI → CUDA VLLM full pipeline</li>
-                  <li>Containerized deployments with Docker &amp; Conda environments</li>
+                  <li>Multimodal visual reasoning with <strong>Qwen-VL</strong> on VLLM</li>
+                  <li>Vision Transformers (ViT) and CNN architectures</li>
+                  <li>React → FastAPI → CUDA VLLM full pipeline</li>
+                  <li>Docker &amp; Conda containerized deployments</li>
                   <li>Model management via Hugging Face Hub</li>
-                  <li>GPU cluster computing with Determined AI / Slurm</li>
+                  <li>GPU cluster computing with Slurm</li>
                 </ul>
-                <div class="tech-tags">
-                  <span>Qwen-VL</span><span>VLLM</span><span>PyTorch</span><span>FastAPI</span><span>Docker</span><span>CUDA</span><span>Slurm</span>
-                </div>
+                <div class="tl-tags"><span>Qwen-VL</span><span>VLLM</span><span>PyTorch</span><span>FastAPI</span><span>Docker</span><span>CUDA</span><span>Slurm</span></div>
               </div>
             </div>
-
-            <div class="timeline-item">
-              <div class="timeline-marker"></div>
-              <div class="timeline-content glass-card">
-                <div class="timeline-header">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-header">
                   <h4>Software Engineer — Pathmate Technologies</h4>
-                  <span class="timeline-date">Nov 2024 – May 2025</span>
+                  <span class="tl-date">Nov 2024 – May 2025</span>
                 </div>
                 <ul>
-                  <li>Built React Native mobile apps for health-tech platforms</li>
+                  <li>React Native mobile apps for health-tech</li>
                   <li>Database design with PostgreSQL &amp; MongoDB</li>
                   <li>CI/CD pipelines with Jenkins</li>
                 </ul>
-                <div class="tech-tags">
-                  <span>React Native</span><span>PostgreSQL</span><span>MongoDB</span><span>Jenkins</span>
-                </div>
+                <div class="tl-tags"><span>React Native</span><span>PostgreSQL</span><span>MongoDB</span><span>Jenkins</span></div>
               </div>
             </div>
-
-            <div class="timeline-item">
-              <div class="timeline-marker"></div>
-              <div class="timeline-content glass-card">
-                <div class="timeline-header">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-header">
                   <h4>Software Engineer — Bloomsmobility Technologies</h4>
-                  <span class="timeline-date">Dec 2021 – May 2023</span>
+                  <span class="tl-date">Dec 2021 – May 2023</span>
                 </div>
                 <ul>
-                  <li>Built <strong>Axis Bank UPI</strong> apps handling millions of transactions</li>
-                  <li>Developed <strong>eRupes CBDC</strong> (Central Bank Digital Currency) application</li>
-                  <li>Production-grade React Native / Kotlin mobile development</li>
+                  <li><strong>Axis Bank UPI</strong> apps — millions of transactions</li>
+                  <li><strong>eRupes CBDC</strong> digital currency application</li>
+                  <li>Production React Native / Kotlin mobile dev</li>
                 </ul>
-                <div class="tech-tags">
-                  <span>React Native</span><span>Kotlin</span><span>UPI</span><span>CBDC</span>
-                </div>
+                <div class="tl-tags"><span>React Native</span><span>Kotlin</span><span>UPI</span><span>CBDC</span></div>
               </div>
             </div>
-
-            <div class="timeline-item">
-              <div class="timeline-marker"></div>
-              <div class="timeline-content glass-card">
-                <div class="timeline-header">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-header">
                   <h4>Software Developer Intern — Archick Technologies</h4>
-                  <span class="timeline-date">Mar 2021 – May 2021</span>
+                  <span class="tl-date">Mar 2021 – May 2021</span>
                 </div>
                 <ul>
-                  <li>Built <strong>HAP Daily</strong> and <strong>Repzy</strong> web applications</li>
-                  <li>Full-stack development with modern web technologies</li>
+                  <li>Built <strong>HAP Daily</strong> and <strong>Repzy</strong> web apps</li>
+                  <li>Full-stack development with modern web tech</li>
                 </ul>
-                <div class="tech-tags">
-                  <span>JavaScript</span><span>React</span><span>Node.js</span>
-                </div>
+                <div class="tl-tags"><span>JavaScript</span><span>React</span><span>Node.js</span></div>
               </div>
             </div>
           </div>
         </div>
-        <div class="content-llm">
-          <div class="llm-explainer glass-card">
-            <div class="llm-badge"><i class="fas fa-brain"></i> Transformer Insight</div>
-            <h4>Multi-Head Self-Attention</h4>
-            <p>The attention mechanism is the heart of the transformer. It computes how much each token should "attend to" every other token:</p>
-            <div class="formula">
-              Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>) · V
-            </div>
-            <p><strong>Key concepts:</strong></p>
-            <ul>
-              <li><strong>Q (Query)</strong> — What I'm looking for</li>
-              <li><strong>K (Key)</strong> — What I have to offer</li>
-              <li><strong>V (Value)</strong> — The actual information</li>
-              <li><strong>Multi-Head</strong> — Run attention h times in parallel with different learned projections, then concatenate</li>
-            </ul>
-            <div class="code-snippet">
-              <code>Q = x @ W_q  # [batch, seq, d_k]</code>
-              <code>K = x @ W_k  # [batch, seq, d_k]</code>
-              <code>V = x @ W_v  # [batch, seq, d_v]</code>
-              <code>scores = (Q @ K.T) / sqrt(d_k)</code>
-              <code>attn = softmax(scores) @ V</code>
-            </div>
-            <p class="llm-connection"><i class="fas fa-link"></i> Like multi-head attention processes information from multiple perspectives simultaneously, my career spans AI research, mobile engineering, fintech, and health-tech.</p>
-          </div>
+      </div>
+
+      <!-- PROJECTS PANEL -->
+      <div class="panel-section" data-panel="projects">
+        <div class="panel-header proj-gradient">
+          <div class="panel-icon"><i class="fas fa-rocket"></i></div>
+          <h2>Innovation Park</h2>
+          <span class="panel-tag">Projects</span>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================
-       SECTION 5: FFN HUB → Projects & Skills
-       ============================================ -->
-  <section id="projects" class="building-section">
-    <div class="building-entrance">
-      <div class="building-3d ffn-hub">
-        <div class="building-body">
-          <div class="b3d-top"></div>
-          <div class="b3d-left"></div>
-          <div class="b3d-right"></div>
-          <div class="b3d-front"></div>
-        </div>
-        <div class="building-icon"><i class="fas fa-network-wired"></i></div>
-      </div>
-      <div class="building-header">
-        <span class="building-tag">Layer 4</span>
-        <h2 class="section-title">Feed-Forward Network Hub</h2>
-        <p class="section-subtitle">Projects &amp; Skills — Processing &amp; Transforming</p>
-      </div>
-    </div>
-
-    <div class="building-interior reveal-up">
-      <div class="content-split">
-        <div class="content-main">
-          <h3 class="sub-heading"><i class="fas fa-rocket"></i> Featured Projects</h3>
-          <div class="project-grid">
-            <div class="project-card glass-card">
-              <div class="project-icon"><i class="fas fa-eye"></i></div>
-              <h4>Multimodal Visual Reasoning</h4>
-              <p>UKP Lab research project using Qwen-VL for visual reasoning tasks. Built full pipeline from React frontend through FastAPI to CUDA-accelerated VLLM inference.</p>
-              <div class="tech-tags"><span>Qwen-VL</span><span>VLLM</span><span>FastAPI</span><span>React</span></div>
-            </div>
-            <div class="project-card glass-card">
-              <div class="project-icon"><i class="fas fa-chart-line"></i></div>
-              <h4>PIPE-X Visualization Tool</h4>
-              <p>Advanced data visualization and pipeline exploration tool for complex data workflows.</p>
-              <div class="tech-tags"><span>Python</span><span>Data Viz</span><span>Analytics</span></div>
-            </div>
-            <div class="project-card glass-card">
-              <div class="project-icon"><i class="fas fa-face-laugh-squint"></i></div>
-              <h4>Meme Myself &amp; AI</h4>
-              <p>AI-powered meme generation platform combining computer vision and natural language understanding.</p>
-              <div class="tech-tags"><span>AI/ML</span><span>NLP</span><span>Computer Vision</span></div>
-            </div>
-            <div class="project-card glass-card">
-              <div class="project-icon"><i class="fas fa-building-columns"></i></div>
-              <h4>Axis Bank UPI Platform</h4>
-              <p>Production UPI payments app for Axis Bank serving millions of transactions. Built with React Native and native modules.</p>
-              <div class="tech-tags"><span>React Native</span><span>Kotlin</span><span>UPI</span></div>
-            </div>
-            <div class="project-card glass-card">
-              <div class="project-icon"><i class="fas fa-coins"></i></div>
-              <h4>eRupes CBDC App</h4>
-              <p>Central Bank Digital Currency application — India's official digital rupee platform built for retail transactions.</p>
-              <div class="tech-tags"><span>React Native</span><span>CBDC</span><span>FinTech</span></div>
-            </div>
-            <div class="project-card glass-card">
-              <div class="project-icon"><i class="fas fa-mobile-screen"></i></div>
-              <h4>Nccstory Android App</h4>
-              <p>Android application with modern UI and native platform integration.</p>
-              <div class="tech-tags"><span>Android</span><span>Kotlin</span><span>Firebase</span></div>
-            </div>
-          </div>
-
-          <h3 class="sub-heading" style="margin-top:3rem;"><i class="fas fa-toolbox"></i> Skills Arsenal</h3>
-          <div class="skills-grid">
-            <div class="skill-category glass-card">
-              <h4><i class="fas fa-robot"></i> AI / ML</h4>
-              <div class="skill-items">
-                <span>PyTorch</span><span>Hugging Face</span><span>VLLM</span><span>Vision Transformers</span><span>CNNs</span><span>NLP</span><span>CUDA</span>
+        <div class="panel-body">
+          <div class="project-list">
+            <div class="proj-card">
+              <div class="proj-icon"><i class="fas fa-eye"></i></div>
+              <div class="proj-info">
+                <h4>Multimodal Visual Reasoning</h4>
+                <p>UKP Lab research: Qwen-VL for visual reasoning. Full pipeline React → FastAPI → CUDA VLLM.</p>
+                <div class="proj-tags"><span>Qwen-VL</span><span>VLLM</span><span>FastAPI</span><span>React</span></div>
               </div>
             </div>
-            <div class="skill-category glass-card">
-              <h4><i class="fas fa-code"></i> Languages</h4>
-              <div class="skill-items">
-                <span>Python</span><span>JavaScript</span><span>TypeScript</span><span>Kotlin</span><span>Swift</span><span>Java</span><span>SQL</span>
+            <div class="proj-card">
+              <div class="proj-icon"><i class="fas fa-chart-line"></i></div>
+              <div class="proj-info">
+                <h4>PIPE-X Visualization Tool</h4>
+                <p>Advanced data visualization and pipeline exploration tool for complex data workflows.</p>
+                <div class="proj-tags"><span>Python</span><span>Data Viz</span><span>Analytics</span></div>
               </div>
             </div>
-            <div class="skill-category glass-card">
-              <h4><i class="fas fa-layer-group"></i> Frameworks</h4>
-              <div class="skill-items">
-                <span>React</span><span>React Native</span><span>FastAPI</span><span>Node.js</span><span>Next.js</span>
+            <div class="proj-card">
+              <div class="proj-icon"><i class="fas fa-face-laugh-squint"></i></div>
+              <div class="proj-info">
+                <h4>Meme Myself &amp; AI</h4>
+                <p>AI-powered meme generation combining computer vision and NLU.</p>
+                <div class="proj-tags"><span>AI/ML</span><span>NLP</span><span>Computer Vision</span></div>
               </div>
             </div>
-            <div class="skill-category glass-card">
-              <h4><i class="fas fa-server"></i> DevOps</h4>
-              <div class="skill-items">
-                <span>Docker</span><span>Kubernetes</span><span>Jenkins</span><span>Git</span><span>Slurm</span><span>Conda</span>
+            <div class="proj-card">
+              <div class="proj-icon"><i class="fas fa-building-columns"></i></div>
+              <div class="proj-info">
+                <h4>Axis Bank UPI Platform</h4>
+                <p>Production UPI payments app serving millions of transactions.</p>
+                <div class="proj-tags"><span>React Native</span><span>Kotlin</span><span>UPI</span></div>
               </div>
             </div>
-            <div class="skill-category glass-card">
-              <h4><i class="fas fa-database"></i> Databases</h4>
-              <div class="skill-items">
-                <span>PostgreSQL</span><span>MongoDB</span><span>Redis</span><span>Firebase</span>
+            <div class="proj-card">
+              <div class="proj-icon"><i class="fas fa-coins"></i></div>
+              <div class="proj-info">
+                <h4>eRupes CBDC App</h4>
+                <p>India's official digital rupee platform for retail transactions.</p>
+                <div class="proj-tags"><span>React Native</span><span>CBDC</span><span>FinTech</span></div>
               </div>
             </div>
-            <div class="skill-category glass-card">
-              <h4><i class="fas fa-mobile-alt"></i> Mobile</h4>
-              <div class="skill-items">
-                <span>React Native</span><span>Android (Kotlin)</span><span>iOS (Swift)</span><span>Expo</span>
+            <div class="proj-card">
+              <div class="proj-icon"><i class="fas fa-mobile-screen"></i></div>
+              <div class="proj-info">
+                <h4>Nccstory Android App</h4>
+                <p>Android application with modern UI and native integration.</p>
+                <div class="proj-tags"><span>Android</span><span>Kotlin</span><span>Firebase</span></div>
               </div>
             </div>
           </div>
         </div>
-        <div class="content-llm">
-          <div class="llm-explainer glass-card">
-            <div class="llm-badge"><i class="fas fa-brain"></i> Transformer Insight</div>
-            <h4>The Feed-Forward Network</h4>
-            <p>After attention, each token passes through a position-wise <strong>Feed-Forward Network (FFN)</strong> — two linear transformations with a nonlinearity:</p>
-            <div class="formula">
-              FFN(x) = W<sub>2</sub> · GELU(W<sub>1</sub> · x + b<sub>1</sub>) + b<sub>2</sub>
-            </div>
-            <ul>
-              <li><strong>First layer</strong> projects from d_model to d_ff (typically 4× larger)</li>
-              <li><strong>Activation</strong> — ReLU (original) or GELU/SwiGLU (modern LLMs)</li>
-              <li><strong>Second layer</strong> projects back from d_ff to d_model</li>
-            </ul>
-            <div class="code-snippet">
-              <code>ffn = nn.Sequential(</code>
-              <code>    nn.Linear(d_model, d_ff),</code>
-              <code>    nn.GELU(),</code>
-              <code>    nn.Linear(d_ff, d_model)</code>
-              <code>)</code>
-            </div>
-            <p>The FFN is where most of the model's <strong>"knowledge"</strong> is stored — factual associations, patterns, and learned transformations.</p>
-            <p class="llm-connection"><i class="fas fa-link"></i> Like the FFN processes and transforms information through its layers, this section showcases the projects and skills that transform ideas into reality.</p>
-          </div>
-        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ============================================
-       SECTION 6: LAYER NORM & RESIDUAL → Education & UKP Lab
-       ============================================ -->
-  <section id="education" class="building-section">
-    <div class="building-entrance">
-      <div class="building-3d layernorm-tower">
-        <div class="building-body">
-          <div class="b3d-top"></div>
-          <div class="b3d-left"></div>
-          <div class="b3d-right"></div>
-          <div class="b3d-front"></div>
+      <!-- EDUCATION PANEL -->
+      <div class="panel-section" data-panel="education">
+        <div class="panel-header edu-gradient">
+          <div class="panel-icon"><i class="fas fa-graduation-cap"></i></div>
+          <h2>University Campus</h2>
+          <span class="panel-tag">Education</span>
         </div>
-        <div class="building-icon"><i class="fas fa-balance-scale"></i></div>
-      </div>
-      <div class="building-header">
-        <span class="building-tag">Layer 5</span>
-        <h2 class="section-title">Layer Norm &amp; Residual Connections</h2>
-        <p class="section-subtitle">Education &amp; Research Lab — Stability &amp; Foundation</p>
-      </div>
-    </div>
-
-    <div class="building-interior reveal-up">
-      <div class="content-split">
-        <div class="content-main">
-          <div class="edu-grid">
-            <div class="edu-card glass-card">
-              <div class="edu-icon"><i class="fas fa-university"></i></div>
+        <div class="panel-body">
+          <div class="edu-card-wrap">
+            <div class="edu-item">
+              <div class="edu-icon-lg"><i class="fas fa-university"></i></div>
               <h4>M.Sc. Computer Science</h4>
               <p class="edu-place">Technical University of Darmstadt, Germany</p>
               <p class="edu-date">Apr 2024 – Present</p>
@@ -575,201 +514,72 @@
                 <span>NLP Architecture</span>
               </div>
             </div>
-            <div class="edu-card glass-card">
-              <div class="edu-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="edu-item">
+              <div class="edu-icon-lg"><i class="fas fa-graduation-cap"></i></div>
               <h4>B.C.A. (Bachelor of Computer Applications)</h4>
               <p class="edu-place">Bengaluru City University, India</p>
               <p class="edu-date">Aug 2018 – May 2021</p>
             </div>
           </div>
-
-          <div class="ukp-deep-dive glass-card">
-            <h3><i class="fas fa-flask"></i> UKP Lab Deep Dive</h3>
-            <p>The <strong>Ubiquitous Knowledge Processing (UKP) Lab</strong> at TU Darmstadt, led by <strong>Prof. Iryna Gurevych</strong>, is one of Europe's leading NLP research groups.</p>
+          <div class="info-card" style="margin-top:1.2rem;">
+            <h3><i class="fas fa-flask"></i> UKP Lab — Deep Dive</h3>
+            <p>The <strong>UKP Lab</strong> at TU Darmstadt, led by <strong>Prof. Iryna Gurevych</strong>, is one of Europe's leading NLP research groups.</p>
             <div class="ukp-areas">
-              <div class="ukp-area">
-                <i class="fas fa-language"></i>
-                <span>Natural Language Processing</span>
-              </div>
-              <div class="ukp-area">
-                <i class="fas fa-search"></i>
-                <span>Information Extraction</span>
-              </div>
-              <div class="ukp-area">
-                <i class="fas fa-comments"></i>
-                <span>Computational Argumentation</span>
-              </div>
-              <div class="ukp-area">
-                <i class="fas fa-images"></i>
-                <span>Multimodal Learning</span>
-              </div>
-            </div>
-            <p>The lab has contributed significantly to transformer-based NLP, including foundational work on text generation, question answering, and cross-lingual transfer learning.</p>
-          </div>
-
-          <div class="languages-section glass-card">
-            <h3><i class="fas fa-globe"></i> Languages</h3>
-            <div class="lang-bars">
-              <div class="lang-bar">
-                <div class="lang-info"><span>English</span><span>C1</span></div>
-                <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
-              </div>
-              <div class="lang-bar">
-                <div class="lang-info"><span>German</span><span>B1</span></div>
-                <div class="bar-track"><div class="bar-fill" data-width="50"></div></div>
-              </div>
-              <div class="lang-bar">
-                <div class="lang-info"><span>Hindi</span><span>C1</span></div>
-                <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
-              </div>
-              <div class="lang-bar">
-                <div class="lang-info"><span>Nepali</span><span>C1</span></div>
-                <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
-              </div>
-              <div class="lang-bar">
-                <div class="lang-info"><span>Kannada</span><span>C1</span></div>
-                <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
-              </div>
+              <span><i class="fas fa-language"></i> NLP</span>
+              <span><i class="fas fa-search"></i> Info Extraction</span>
+              <span><i class="fas fa-comments"></i> Argumentation</span>
+              <span><i class="fas fa-images"></i> Multimodal</span>
             </div>
           </div>
         </div>
-        <div class="content-llm">
-          <div class="llm-explainer glass-card">
-            <div class="llm-badge"><i class="fas fa-brain"></i> Transformer Insight</div>
-            <h4>Layer Normalization &amp; Residual Connections</h4>
-            <p>Two critical mechanisms that make deep transformers trainable:</p>
-            <div class="formula">
-              output = LayerNorm(x + Sublayer(x))
-            </div>
-            <ul>
-              <li><strong>Residual Connections</strong> — Add the input directly to the output of each sub-layer (attention or FFN). This creates "skip connections" that allow gradients to flow freely during backpropagation</li>
-              <li><strong>Layer Normalization</strong> — Normalizes activations across the feature dimension, stabilizing training by ensuring consistent scale</li>
-              <li><strong>Pre-Norm vs Post-Norm</strong> — Modern LLMs (GPT-3, LLaMA) use Pre-Norm (normalize before sublayer), while the original transformer used Post-Norm</li>
-            </ul>
-            <div class="code-snippet">
-              <code># Pre-Norm (modern)</code>
-              <code>x = x + attention(layer_norm(x))</code>
-              <code>x = x + ffn(layer_norm(x))</code>
-            </div>
-            <p class="llm-connection"><i class="fas fa-link"></i> Like residual connections preserve and stabilize information flow, education provides the foundational knowledge that stabilizes and strengthens all professional growth.</p>
-          </div>
-        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ============================================
-       SECTION 7: OUTPUT PROJECTION → Contact & Future
-       ============================================ -->
-  <section id="contact" class="building-section">
-    <div class="building-entrance">
-      <div class="building-3d output-tower">
-        <div class="building-body">
-          <div class="b3d-top"></div>
-          <div class="b3d-left"></div>
-          <div class="b3d-right"></div>
-          <div class="b3d-front"></div>
+      <!-- CONTACT PANEL -->
+      <div class="panel-section" data-panel="contact">
+        <div class="panel-header contact-gradient">
+          <div class="panel-icon"><i class="fas fa-satellite-dish"></i></div>
+          <h2>Communication Hub</h2>
+          <span class="panel-tag">Contact</span>
         </div>
-        <div class="building-icon"><i class="fas fa-signal"></i></div>
-      </div>
-      <div class="building-header">
-        <span class="building-tag">Layer 6</span>
-        <h2 class="section-title">Output Projection &amp; Softmax Tower</h2>
-        <p class="section-subtitle">Contact &amp; The Future of LLMs</p>
-      </div>
-    </div>
-
-    <div class="building-interior reveal-up">
-      <div class="content-split">
-        <div class="content-main">
-          <div class="contact-grid">
-            <a href="mailto:Amritkhadka6719@gmail.com" class="contact-card glass-card">
+        <div class="panel-body">
+          <div class="contact-list">
+            <a href="mailto:Amritkhadka6719@gmail.com" class="contact-item">
               <i class="fas fa-envelope"></i>
-              <h4>Email</h4>
-              <p>Amritkhadka6719@gmail.com</p>
+              <div><strong>Email</strong><br/>Amritkhadka6719@gmail.com</div>
             </a>
-            <a href="tel:+4915252617981" class="contact-card glass-card">
+            <a href="tel:+4915252617981" class="contact-item">
               <i class="fas fa-phone"></i>
-              <h4>Phone</h4>
-              <p>+49 152-52617981</p>
+              <div><strong>Phone</strong><br/>+49 152-52617981</div>
             </a>
-            <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer" class="contact-card glass-card">
+            <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer" class="contact-item">
               <i class="fab fa-linkedin"></i>
-              <h4>LinkedIn</h4>
-              <p>linkedin.com/in/amritkhadka04</p>
+              <div><strong>LinkedIn</strong><br/>linkedin.com/in/amritkhadka04</div>
             </a>
-            <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer" class="contact-card glass-card">
+            <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer" class="contact-item">
               <i class="fab fa-github"></i>
-              <h4>GitHub</h4>
-              <p>github.com/Amritkc</p>
+              <div><strong>GitHub</strong><br/>github.com/Amritkc</div>
             </a>
           </div>
-
-          <div class="future-vision glass-card">
-            <h3><i class="fas fa-telescope"></i> The Future of LLMs</h3>
-            <div class="future-grid">
-              <div class="future-item">
-                <i class="fas fa-expand-arrows-alt"></i>
-                <h4>Scaling Laws</h4>
-                <p>Chinchilla-optimal training, mixture-of-experts architectures, and efficient scaling will define the next generation of models.</p>
-              </div>
-              <div class="future-item">
-                <i class="fas fa-images"></i>
-                <h4>Multimodal Models</h4>
-                <p>The convergence of vision, language, and audio in unified architectures — exactly where my research at UKP Lab focuses.</p>
-              </div>
-              <div class="future-item">
-                <i class="fas fa-bolt"></i>
-                <h4>Efficient Inference</h4>
-                <p>Quantization, speculative decoding, KV-cache optimization, and frameworks like VLLM are making LLMs more accessible.</p>
-              </div>
-              <div class="future-item">
-                <i class="fas fa-brain"></i>
-                <h4>My Vision</h4>
-                <p>I aim to bridge the gap between cutting-edge AI research and practical software engineering, building systems that are both intelligent and production-ready.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="content-llm">
-          <div class="llm-explainer glass-card">
-            <div class="llm-badge"><i class="fas fa-brain"></i> Transformer Insight</div>
-            <h4>Output Projection &amp; Softmax</h4>
-            <p>The final layer of the transformer maps hidden states back to the vocabulary space:</p>
-            <div class="formula">
-              P(next_token) = softmax(W<sub>out</sub> · h + b)
-            </div>
-            <ul>
-              <li><strong>Linear Projection</strong> — Maps the d_model hidden state to vocab_size logits</li>
-              <li><strong>Softmax</strong> — Converts logits into a probability distribution over the vocabulary</li>
-              <li><strong>Weight Tying</strong> — Many models share weights between the input embedding and output projection (reduces parameters)</li>
-              <li><strong>Sampling Strategies</strong> — Top-k, top-p (nucleus), temperature scaling control generation diversity</li>
-            </ul>
-            <div class="code-snippet">
-              <code>logits = hidden_state @ embedding.weight.T</code>
-              <code>probs = F.softmax(logits / temperature, dim=-1)</code>
-              <code>next_token = top_p_sample(probs, p=0.9)</code>
-            </div>
-            <p class="llm-connection"><i class="fas fa-link"></i> The output layer produces the final result — just as this section produces the final output of my portfolio: how to reach me and where we're heading next.</p>
+          <div class="info-card" style="margin-top:1.2rem;">
+            <h3><i class="fas fa-telescope"></i> Vision</h3>
+            <p>I aim to bridge the gap between cutting-edge AI research and practical software engineering, building systems that are both intelligent and production-ready.</p>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Footer -->
-  <footer id="footer">
-    <div class="footer-content">
-      <div class="footer-logo">AK<span class="blinking-cursor">_</span></div>
-      <p>Built with ❤️ by Amrit Khadka — Exploring the Transformer Architecture, one layer at a time.</p>
-      <div class="footer-links">
-        <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
-        <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-        <a href="mailto:Amritkhadka6719@gmail.com"><i class="fas fa-envelope"></i></a>
-      </div>
-      <p class="footer-copy">&copy; 2025 Amrit Khadka. All rights reserved.</p>
     </div>
-  </footer>
+  </div>
+
+  <!-- ==================== FOOTER BAR ==================== -->
+  <div id="footer-bar">
+    <span>© 2025 Amrit Khadka</span>
+    <span class="footer-sep">•</span>
+    <span>Built with ❤️</span>
+    <span class="footer-sep">•</span>
+    <a href="https://github.com/Amritkc" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
+    <a href="https://linkedin.com/in/amritkhadka04" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+    <a href="mailto:Amritkhadka6719@gmail.com"><i class="fas fa-envelope"></i></a>
+  </div>
 
   <script src="script.js"></script>
 </body>
