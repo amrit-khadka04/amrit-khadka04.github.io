@@ -6,13 +6,13 @@
   'use strict';
 
   /* ---------- Neural Network Background ---------- */
-  var canvas = document.getElementById('neural-bg');
+  const canvas = document.getElementById('neural-bg');
   if (canvas) {
-    var ctx = canvas.getContext('2d');
-    var particles = [];
-    var PARTICLE_COUNT = 50;
-    var CONNECTION_DIST = 140;
-    var mouse = { x: -1000, y: -1000 };
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const PARTICLE_COUNT = 50;
+    const CONNECTION_DIST = 140;
+    const mouse = { x: -1000, y: -1000 };
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -21,7 +21,7 @@
 
     function createParticles() {
       particles = [];
-      for (var i = 0; i < PARTICLE_COUNT; i++) {
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -36,13 +36,13 @@
     function drawParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      for (var i = 0; i < particles.length; i++) {
-        for (var j = i + 1; j < particles.length; j++) {
-          var dx = particles[i].x - particles[j].x;
-          var dy = particles[i].y - particles[j].y;
-          var dist = Math.sqrt(dx * dx + dy * dy);
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECTION_DIST) {
-            var opacity = (1 - dist / CONNECTION_DIST) * 0.12;
+            const opacity = (1 - dist / CONNECTION_DIST) * 0.12;
             ctx.strokeStyle = 'rgba(99, 102, 241, ' + opacity + ')';
             ctx.lineWidth = 0.5;
             ctx.beginPath();
@@ -53,11 +53,11 @@
         }
       }
 
-      for (var k = 0; k < particles.length; k++) {
-        var p = particles[k];
-        var mdx = p.x - mouse.x;
-        var mdy = p.y - mouse.y;
-        var mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+      for (let k = 0; k < particles.length; k++) {
+        const p = particles[k];
+        const mdx = p.x - mouse.x;
+        const mdy = p.y - mouse.y;
+        const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
         if (mDist < 200) {
           p.x += mdx * 0.008;
           p.y += mdy * 0.008;
@@ -99,7 +99,7 @@
   }
 
   /* ---------- Cursor Glow ---------- */
-  var cursorGlow = document.getElementById('cursor-glow');
+  const cursorGlow = document.getElementById('cursor-glow');
   if (cursorGlow) {
     document.addEventListener('mousemove', function (e) {
       cursorGlow.style.left = e.clientX + 'px';
@@ -108,8 +108,8 @@
   }
 
   /* ---------- Mobile Nav Toggle ---------- */
-  var navToggle = document.getElementById('nav-toggle');
-  var mobileNav = document.getElementById('mobile-nav');
+  const navToggle = document.getElementById('nav-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
 
   if (navToggle && mobileNav) {
     navToggle.addEventListener('click', function () {
@@ -117,7 +117,7 @@
       mobileNav.classList.toggle('open');
     });
 
-    var mobileLinks = mobileNav.querySelectorAll('a');
+    const mobileLinks = mobileNav.querySelectorAll('a');
     mobileLinks.forEach(function (link) {
       link.addEventListener('click', function () {
         navToggle.classList.remove('open');
@@ -127,9 +127,9 @@
   }
 
   /* ---------- Typing Effect ---------- */
-  var typedOutput = document.getElementById('typed-output');
+  const typedOutput = document.getElementById('typed-output');
   if (typedOutput) {
-    var phrases = [
+    const phrases = [
       'Building multimodal AI systems',
       'Vision-Language Model researcher',
       'React Native mobile engineer',
@@ -137,13 +137,13 @@
       'From UPI banking apps to VLLMs',
       'Full-stack developer & AI enthusiast',
     ];
-    var phraseIndex = 0;
-    var charIndex = 0;
-    var isDeleting = false;
-    var typingSpeed = 55;
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingSpeed = 55;
 
     function type() {
-      var current = phrases[phraseIndex];
+      const current = phrases[phraseIndex];
       if (isDeleting) {
         typedOutput.textContent = current.substring(0, charIndex - 1);
         charIndex--;
@@ -152,7 +152,7 @@
         charIndex++;
       }
 
-      var delay = isDeleting ? 25 : typingSpeed;
+      let delay = isDeleting ? 25 : typingSpeed;
 
       if (!isDeleting && charIndex === current.length) {
         delay = 2000;
@@ -171,13 +171,13 @@
 
   /* ---------- Counter Animation ---------- */
   function animateCounters() {
-    var counters = document.querySelectorAll('.stat-number');
+    const counters = document.querySelectorAll('.stat-number');
     counters.forEach(function (counter) {
-      var target = parseInt(counter.getAttribute('data-target'), 10);
+      const target = parseInt(counter.getAttribute('data-target'), 10);
       if (isNaN(target)) return;
-      var current = 0;
-      var increment = Math.max(1, Math.floor(target / 40));
-      var stepTime = 50;
+      let current = 0;
+      const increment = Math.max(1, Math.floor(target / 40));
+      const stepTime = 50;
 
       function update() {
         current += increment;
@@ -194,7 +194,7 @@
   }
 
   /* ---------- Scroll Reveal via Intersection Observer ---------- */
-  var revealObserver = new IntersectionObserver(function (entries) {
+  const revealObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('revealed');
@@ -211,8 +211,8 @@
   });
 
   /* ---------- Stats Counter Trigger ---------- */
-  var countersAnimated = false;
-  var statsObserver = new IntersectionObserver(function (entries) {
+  let countersAnimated = false;
+  const statsObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting && !countersAnimated) {
         countersAnimated = true;
@@ -222,18 +222,18 @@
     });
   }, { threshold: 0.3 });
 
-  var statsSection = document.querySelector('.hero-stats');
+  const statsSection = document.querySelector('.hero-stats');
   if (statsSection) {
     statsObserver.observe(statsSection);
   }
 
   /* ---------- Language Bar Animation ---------- */
-  var barObserver = new IntersectionObserver(function (entries) {
+  const barObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
-        var bars = entry.target.querySelectorAll('.bar-fill');
+        const bars = entry.target.querySelectorAll('.bar-fill');
         bars.forEach(function (bar) {
-          var width = bar.getAttribute('data-width');
+          const width = bar.getAttribute('data-width');
           if (width) {
             bar.style.width = width + '%';
           }
@@ -243,23 +243,21 @@
     });
   }, { threshold: 0.2 });
 
-  var langSection = document.querySelector('.lang-bars');
+  const langSection = document.querySelector('.lang-bars');
   if (langSection) {
     barObserver.observe(langSection);
   }
 
   /* ---------- Mini-Map Active Section Tracking ---------- */
-  var minimapNodes = document.querySelectorAll('.minimap-node');
-  var sections = document.querySelectorAll('.building-section');
+  const minimapNodes = document.querySelectorAll('.minimap-node');
+  const sections = document.querySelectorAll('.building-section');
 
-  var sectionObserver = new IntersectionObserver(function (entries) {
+  const sectionObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
-        // Add in-view class to section for CSS animations
         entry.target.classList.add('in-view');
 
-        // Update minimap
-        var sectionId = entry.target.id;
+        const sectionId = entry.target.id;
         minimapNodes.forEach(function (node) {
           node.classList.remove('active');
           if (node.getAttribute('href') === '#' + sectionId) {
@@ -280,7 +278,7 @@
   /* ---------- Smooth Scroll for All Anchor Links ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
-      var targetEl = document.querySelector(this.getAttribute('href'));
+      const targetEl = document.querySelector(this.getAttribute('href'));
       if (targetEl) {
         e.preventDefault();
         targetEl.scrollIntoView({ behavior: 'smooth' });
@@ -289,26 +287,24 @@
   });
 
   /* ---------- Parallax Building Entrances on Scroll ---------- */
-  var buildingEntrances = document.querySelectorAll('.building-entrance');
+  const buildingEntrances = document.querySelectorAll('.building-entrance');
 
   function updateParallax() {
-    var scrollY = window.scrollY;
-    var windowH = window.innerHeight;
+    const windowH = window.innerHeight;
 
     buildingEntrances.forEach(function (entrance) {
-      var rect = entrance.getBoundingClientRect();
-      var centerY = rect.top + rect.height / 2;
-      var offset = (centerY - windowH / 2) / windowH;
-      var building = entrance.querySelector('.building-3d');
+      const rect = entrance.getBoundingClientRect();
+      const centerY = rect.top + rect.height / 2;
+      const offset = (centerY - windowH / 2) / windowH;
+      const building = entrance.querySelector('.building-3d');
       if (building) {
-        var translateY = offset * -15;
-        var rotateExtra = offset * 3;
+        const translateY = offset * -15;
         building.style.transform = 'translateY(' + translateY + 'px)';
       }
     });
   }
 
-  var ticking = false;
+  let ticking = false;
   window.addEventListener('scroll', function () {
     if (!ticking) {
       requestAnimationFrame(function () {
@@ -320,8 +316,8 @@
   });
 
   /* ---------- Isometric City Building Click to Navigate ---------- */
-  var isoBuildings = document.querySelectorAll('.iso-building[data-building]');
-  var buildingMap = {
+  const isoBuildings = document.querySelectorAll('.iso-building[data-building]');
+  const buildingMap = {
     embedding: '#about',
     positional: '#architecture',
     attention: '#experience',
@@ -333,9 +329,9 @@
   isoBuildings.forEach(function (building) {
     building.style.cursor = 'pointer';
     building.addEventListener('click', function () {
-      var target = buildingMap[this.getAttribute('data-building')];
+      const target = buildingMap[this.getAttribute('data-building')];
       if (target) {
-        var el = document.querySelector(target);
+        const el = document.querySelector(target);
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }
     });

@@ -44,7 +44,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 0;
+  scroll-padding-top: 30px;
 }
 
 body {
@@ -845,14 +845,12 @@ a:hover {
 .positional-spire .b3d-right { background: rgba(139,92,246,0.2); }
 .positional-spire .b3d-front { background: linear-gradient(180deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05)); border: 1px solid rgba(139,92,246,0.3); }
 .positional-spire .building-icon { color: var(--b-positional); }
-.positional-spire { height: 180px; }
 
 .attention-complex .b3d-top { background: rgba(236,72,153,0.5); }
 .attention-complex .b3d-left { background: rgba(236,72,153,0.3); }
 .attention-complex .b3d-right { background: rgba(236,72,153,0.2); }
 .attention-complex .b3d-front { background: linear-gradient(180deg, rgba(236,72,153,0.15), rgba(236,72,153,0.05)); border: 1px solid rgba(236,72,153,0.3); }
 .attention-complex .building-icon { color: var(--b-attention); }
-.attention-complex { width: 140px; height: 180px; }
 
 .ffn-hub .b3d-top { background: rgba(6,182,212,0.5); }
 .ffn-hub .b3d-left { background: rgba(6,182,212,0.3); }
