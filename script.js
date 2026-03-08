@@ -7,18 +7,31 @@
 
   /* ===== Configuration ===== */
   var GITHUB_USER = 'amritkc';
-  var STAR_COUNT = 400;
+  var STAR_COUNT = 500;
   var SHOOTING_STAR_INTERVAL = 4000;
+  var SUPERNOVA_INTERVAL = 12000;
 
-  /* Planet positions (percentage-based for responsiveness) */
+  /* Planet positions (percentage-based) */
   var planetPositions = {
-    home:       { xPct: 50, yPct: 50 },
-    about:      { xPct: 22, yPct: 25 },
-    skills:     { xPct: 78, yPct: 22 },
-    projects:   { xPct: 78, yPct: 75 },
-    experience: { xPct: 22, yPct: 75 },
-    contact:    { xPct: 50, yPct: 88 }
+    home:       { xPct: 50, yPct: 30 },
+    about:      { xPct: 18, yPct: 20 },
+    education:  { xPct: 82, yPct: 18 },
+    skills:     { xPct: 86, yPct: 50 },
+    projects:   { xPct: 75, yPct: 82 },
+    experience: { xPct: 18, yPct: 78 },
+    contact:    { xPct: 50, yPct: 92 }
   };
+
+  /* Star colors for variety */
+  var starColors = [
+    { r: 255, g: 255, b: 255 },
+    { r: 200, g: 220, b: 255 },
+    { r: 255, g: 220, b: 200 },
+    { r: 180, g: 200, b: 255 },
+    { r: 255, g: 200, b: 180 },
+    { r: 220, g: 255, b: 220 },
+    { r: 255, g: 180, b: 220 }
+  ];
 
   /* ===== State ===== */
   var state = {
@@ -33,7 +46,8 @@
     activeSection: null,
     loaded: false,
     repos: [],
-    touchDist: 0
+    touchDist: 0,
+    rocketAnimating: false
   };
 
   var MIN_ZOOM = 0.5;
@@ -49,10 +63,9 @@
   var zoomInBtn, zoomOutBtn, zoomResetBtn;
   var navBtns;
   var codeModal, codeModalTitle, codeModalContent, codeModalClose, codeModalLoading;
-  var skillsCanvas, skillsCtx;
-  var shootingStarsEl;
+  var shootingStarsEl, supernovaContainer;
+  var rocketEl;
   var stars = [];
-  var skillStars = [];
   var animFrameId;
 
   /* ===== Initialization ===== */
@@ -61,6 +74,7 @@
     positionPlanets();
     initStars();
     initShootingStars();
+    initSupernova();
     bindEvents();
     startLoadingSequence();
     animate();
@@ -87,6 +101,8 @@
     codeModalClose = document.getElementById('code-modal-close');
     codeModalLoading = document.getElementById('code-modal-loading');
     shootingStarsEl = document.getElementById('shooting-stars');
+    supernovaContainer = document.getElementById('supernova-container');
+    rocketEl = document.getElementById('rocket');
   }
 
   /* ===== Planet Positioning ===== */
@@ -103,45 +119,41 @@
     });
   }
 
-  /* ===== Stars ===== */
+  /* ===== Star Field ===== */
   function initStars() {
     starsCanvas.width = window.innerWidth;
     starsCanvas.height = window.innerHeight;
     stars = [];
     for (var i = 0; i < STAR_COUNT; i++) {
+      var colorObj = starColors[Math.floor(Math.random() * starColors.length)];
       stars.push({
         x: Math.random() * starsCanvas.width,
         y: Math.random() * starsCanvas.height,
         radius: Math.random() * 1.8 + 0.3,
-        alpha: Math.random() * 0.8 + 0.2,
-        speed: Math.random() * 0.5 + 0.1,
-        parallax: Math.random() * 0.5 + 0.2
+        alpha: Math.random() * 0.7 + 0.3,
+        twinkleSpeed: Math.random() * 0.02 + 0.005,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        color: colorObj
       });
     }
   }
 
-  function drawStars() {
+  function drawStars(time) {
     starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
-    var cx = (state.mouseX / window.innerWidth - 0.5) * 2;
-    var cy = (state.mouseY / window.innerHeight - 0.5) * 2;
-
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
-      var px = s.x + cx * s.parallax * 30;
-      var py = s.y + cy * s.parallax * 30;
-      s.alpha += (Math.random() - 0.5) * 0.02;
-      if (s.alpha < 0.1) s.alpha = 0.1;
-      if (s.alpha > 1) s.alpha = 1;
-
+      var twinkle = Math.sin(time * s.twinkleSpeed + s.twinkleOffset);
+      var alpha = s.alpha + twinkle * 0.3;
+      if (alpha < 0.1) alpha = 0.1;
+      if (alpha > 1) alpha = 1;
       starsCtx.beginPath();
-      starsCtx.arc(px, py, s.radius, 0, Math.PI * 2);
-      starsCtx.fillStyle = 'rgba(255, 255, 255, ' + s.alpha + ')';
+      starsCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      starsCtx.fillStyle = 'rgba(' + s.color.r + ',' + s.color.g + ',' + s.color.b + ',' + alpha + ')';
       starsCtx.fill();
-
       if (s.radius > 1.2) {
         starsCtx.beginPath();
-        starsCtx.arc(px, py, s.radius * 2.5, 0, Math.PI * 2);
-        starsCtx.fillStyle = 'rgba(100, 200, 255, ' + (s.alpha * 0.15) + ')';
+        starsCtx.arc(s.x, s.y, s.radius * 2, 0, Math.PI * 2);
+        starsCtx.fillStyle = 'rgba(' + s.color.r + ',' + s.color.g + ',' + s.color.b + ',' + (alpha * 0.15) + ')';
         starsCtx.fill();
       }
     }
@@ -149,216 +161,357 @@
 
   /* ===== Shooting Stars ===== */
   function initShootingStars() {
+    createShootingStar();
     setInterval(createShootingStar, SHOOTING_STAR_INTERVAL);
-    setTimeout(createShootingStar, 1000);
   }
 
   function createShootingStar() {
-    if (state.activeSection) return;
-    var star = document.createElement('div');
-    star.className = 'shooting-star';
-    star.style.top = (Math.random() * 60) + '%';
-    star.style.left = (Math.random() * 70) + '%';
-    star.style.transform = 'rotate(' + (Math.random() * 30 + 15) + 'deg)';
-    shootingStarsEl.appendChild(star);
+    if (!state.loaded) return;
+    var el = document.createElement('div');
+    el.className = 'shooting-star';
+    var startX = Math.random() * window.innerWidth * 0.7;
+    var startY = Math.random() * window.innerHeight * 0.5;
+    var angle = 15 + Math.random() * 30;
+    el.style.left = startX + 'px';
+    el.style.top = startY + 'px';
+    el.style.transform = 'rotate(' + angle + 'deg)';
+    el.style.width = (60 + Math.random() * 80) + 'px';
+    shootingStarsEl.appendChild(el);
     setTimeout(function () {
-      if (star.parentNode) star.parentNode.removeChild(star);
-    }, 1500);
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 1200);
   }
 
-  /* ===== Skills Constellation ===== */
-  function initSkillsConstellation() {
-    skillsCanvas = document.getElementById('skills-canvas');
-    if (!skillsCanvas) return;
-    skillsCtx = skillsCanvas.getContext('2d');
-    var rect = skillsCanvas.getBoundingClientRect();
-    skillsCanvas.width = rect.width;
-    skillsCanvas.height = rect.height || 300;
+  /* ===== Supernova ===== */
+  function initSupernova() {
+    setInterval(createSupernova, SUPERNOVA_INTERVAL);
+  }
 
-    var skillNames = ['Python', 'PyTorch', 'React', 'JavaScript', 'Docker', 'CUDA', 'NLP', 'CV', 'Node.js', 'SQL', 'Git', 'AWS', 'HuggingFace', 'TypeScript'];
-    skillStars = [];
-    var w = skillsCanvas.width;
-    var h = skillsCanvas.height;
-    var padding = 40;
+  function createSupernova() {
+    if (!state.loaded) return;
+    var el = document.createElement('div');
+    el.className = 'supernova';
+    var x = Math.random() * window.innerWidth;
+    var y = Math.random() * window.innerHeight;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    var hue = Math.floor(Math.random() * 360);
+    el.style.background = 'radial-gradient(circle, hsla(' + hue + ',100%,80%,0.9), hsla(' + hue + ',80%,50%,0.5), transparent)';
+    supernovaContainer.appendChild(el);
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 2500);
+  }
 
-    for (var i = 0; i < skillNames.length; i++) {
-      skillStars.push({
-        x: padding + Math.random() * (w - 2 * padding),
-        y: padding + Math.random() * (h - 2 * padding),
-        radius: 3 + Math.random() * 4,
-        name: skillNames[i],
-        alpha: 0.6 + Math.random() * 0.4,
-        hovered: false,
-        color: ['#00d4ff', '#a855f7', '#34d399', '#fb923c', '#f472b6'][Math.floor(Math.random() * 5)]
+  /* ===== Whoosh Sound ===== */
+  var audioCtx = null;
+  function getAudioContext() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+  }
+
+  function playWhoosh() {
+    try {
+      var ctx = getAudioContext();
+      if (ctx.state === 'suspended') ctx.resume();
+      var bufferSize = Math.floor(ctx.sampleRate * 0.5);
+      var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      var data = buffer.getChannelData(0);
+      for (var i = 0; i < bufferSize; i++) {
+        var t = i / bufferSize;
+        var envelope = Math.sin(t * Math.PI);
+        data[i] = (Math.random() * 2 - 1) * envelope * 0.3;
+      }
+      var source = ctx.createBufferSource();
+      source.buffer = buffer;
+      var filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1200, ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.5);
+      filter.Q.value = 0.8;
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      source.start();
+    } catch (e) {
+      /* Audio not available */
+    }
+  }
+
+  /* ===== Rocket Travel Animation ===== */
+  function animateRocket(targetSection, callback) {
+    if (state.rocketAnimating) return;
+    state.rocketAnimating = true;
+
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var startX = w / 2;
+    var startY = h / 2;
+    var targetPos = planetPositions[targetSection];
+    if (!targetPos) {
+      state.rocketAnimating = false;
+      callback();
+      return;
+    }
+    var endX = targetPos.xPct / 100 * w;
+    var endY = targetPos.yPct / 100 * h;
+
+    var dx = endX - startX;
+    var dy = endY - startY;
+    var angle = Math.atan2(dy, dx) * (180 / Math.PI) - 45;
+
+    rocketEl.style.left = startX + 'px';
+    rocketEl.style.top = startY + 'px';
+    rocketEl.querySelector('.rocket-body').style.transform = 'rotate(' + angle + 'deg)';
+    rocketEl.classList.add('active');
+
+    playWhoosh();
+
+    var duration = 800;
+    var startTime = performance.now();
+
+    function step(currentTime) {
+      var elapsed = currentTime - startTime;
+      var progress = Math.min(elapsed / duration, 1);
+      var ease = progress < 0.5
+        ? 2 * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+      var cx = startX + dx * ease;
+      var cy = startY + dy * ease;
+      rocketEl.style.left = cx + 'px';
+      rocketEl.style.top = cy + 'px';
+
+      createRocketTrailParticle(cx, cy);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        rocketEl.classList.remove('active');
+        state.rocketAnimating = false;
+        callback();
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  var MAX_TRAIL_PARTICLES = 30;
+  var activeTrailParticles = 0;
+
+  function createRocketTrailParticle(x, y) {
+    if (activeTrailParticles >= MAX_TRAIL_PARTICLES) return;
+    activeTrailParticles++;
+    var particle = document.createElement('div');
+    particle.style.cssText = 'position:fixed;width:4px;height:4px;border-radius:50%;pointer-events:none;z-index:9998;' +
+      'left:' + x + 'px;top:' + y + 'px;' +
+      'background:radial-gradient(circle,rgba(0,212,255,0.8),rgba(168,85,247,0.4),transparent);' +
+      'box-shadow:0 0 6px rgba(0,212,255,0.6);';
+    document.body.appendChild(particle);
+
+    var size = 4;
+    var opacity = 1;
+    function fadeOut() {
+      size += 0.5;
+      opacity -= 0.05;
+      if (opacity <= 0) {
+        if (particle.parentNode) particle.parentNode.removeChild(particle);
+        activeTrailParticles--;
+        return;
+      }
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      particle.style.opacity = opacity;
+      requestAnimationFrame(fadeOut);
+    }
+    requestAnimationFrame(fadeOut);
+  }
+
+  /* ===== Panel Management ===== */
+  function openSection(section) {
+    if (state.activeSection === section) return;
+    closeAllPanels();
+    var panel = document.getElementById('panel-' + section);
+    if (!panel) return;
+
+    if (state.rocketAnimating) return;
+
+    animateRocket(section, function () {
+      panel.classList.add('active');
+      state.activeSection = section;
+      updateNavActive(section);
+
+      if (section === 'projects' && state.repos.length === 0) {
+        fetchGitHubRepos();
+      }
+    });
+  }
+
+  function closeAllPanels() {
+    panels.forEach(function (p) { p.classList.remove('active'); });
+    state.activeSection = null;
+    updateNavActive(null);
+  }
+
+  function updateNavActive(section) {
+    navBtns.forEach(function (btn) {
+      if (btn.dataset.section === section) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  /* ===== GitHub Repos ===== */
+  function fetchGitHubRepos() {
+    var container = document.getElementById('projects-container');
+    fetch('https://api.github.com/users/' + GITHUB_USER + '/repos?sort=updated&per_page=30')
+      .then(function (r) { return r.json(); })
+      .then(function (repos) {
+        state.repos = repos;
+        renderRepos(repos, container);
+      })
+      .catch(function () {
+        container.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;">Could not fetch repos. Try again later.</p>';
       });
-    }
-    drawSkillsConstellation();
-    skillsCanvas.addEventListener('mousemove', handleSkillHover);
   }
 
-  function drawSkillsConstellation() {
-    if (!skillsCtx) return;
-    skillsCtx.clearRect(0, 0, skillsCanvas.width, skillsCanvas.height);
+  function renderRepos(repos, container) {
+    if (!repos || !repos.length) {
+      container.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;">No repositories found.</p>';
+      return;
+    }
 
-    /* Draw connections */
-    for (var i = 0; i < skillStars.length; i++) {
-      for (var j = i + 1; j < skillStars.length; j++) {
-        var dx = skillStars[i].x - skillStars[j].x;
-        var dy = skillStars[i].y - skillStars[j].y;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 180) {
-          skillsCtx.beginPath();
-          skillsCtx.moveTo(skillStars[i].x, skillStars[i].y);
-          skillsCtx.lineTo(skillStars[j].x, skillStars[j].y);
-          skillsCtx.strokeStyle = 'rgba(0, 212, 255, ' + (0.15 * (1 - dist / 180)) + ')';
-          skillsCtx.lineWidth = 1;
-          skillsCtx.stroke();
+    var langColors = {
+      JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572a5',
+      Java: '#b07219', Kotlin: '#A97BFF', Swift: '#F05138',
+      HTML: '#e34c26', CSS: '#563d7c', Shell: '#89e051',
+      'Jupyter Notebook': '#DA5B0B', Dart: '#00B4AB', C: '#555555',
+      'C++': '#f34b7d', Go: '#00ADD8', Rust: '#dea584', Ruby: '#701516'
+    };
+
+    var html = '';
+    repos.forEach(function (repo) {
+      if (repo.fork) return;
+      var lang = repo.language || '';
+      var langDot = lang ? '<span class="repo-lang"><span class="lang-dot" style="background:' + (langColors[lang] || '#888') + '"></span>' + lang + '</span>' : '';
+      var desc = repo.description ? escapeHtml(repo.description) : 'No description';
+      if (desc.length > 120) desc = desc.substring(0, 120) + '...';
+
+      html += '<div class="repo-card glass-card">' +
+        '<h4><i class="fas fa-code-branch"></i> ' + escapeHtml(repo.name) + '</h4>' +
+        '<p>' + desc + '</p>' +
+        '<div class="repo-meta">' + langDot +
+        '<span><i class="fas fa-star"></i> ' + repo.stargazers_count + '</span>' +
+        '<span><i class="fas fa-code-branch"></i> ' + repo.forks_count + '</span>' +
+        '</div>' +
+        '<div class="repo-links">' +
+        '<a href="' + escapeHtml(repo.html_url) + '" target="_blank" rel="noopener" class="repo-link"><i class="fab fa-github"></i> Repo</a>' +
+        (repo.homepage ? '<a href="' + escapeHtml(repo.homepage) + '" target="_blank" rel="noopener" class="repo-link"><i class="fas fa-external-link-alt"></i> Live</a>' : '') +
+        '</div></div>';
+    });
+
+    container.innerHTML = html || '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;">No repositories found.</p>';
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  /* ===== Experience Collapsible ===== */
+  function initExpCollapse() {
+    var headers = document.querySelectorAll('.exp-header[data-collapse]');
+    headers.forEach(function (header) {
+      header.addEventListener('click', function () {
+        var targetId = header.getAttribute('data-collapse');
+        var details = document.getElementById(targetId);
+        var toggle = header.querySelector('.exp-toggle');
+        if (!details) return;
+
+        var isOpen = details.classList.contains('open');
+        /* Close all first */
+        document.querySelectorAll('.exp-details').forEach(function (d) { d.classList.remove('open'); });
+        document.querySelectorAll('.exp-toggle').forEach(function (t) { t.classList.remove('rotated'); });
+
+        if (!isOpen) {
+          details.classList.add('open');
+          if (toggle) toggle.classList.add('rotated');
         }
-      }
-    }
-
-    /* Draw stars */
-    for (var k = 0; k < skillStars.length; k++) {
-      var s = skillStars[k];
-      /* Glow */
-      skillsCtx.beginPath();
-      skillsCtx.arc(s.x, s.y, s.radius * 3, 0, Math.PI * 2);
-      skillsCtx.fillStyle = s.color.replace(')', ', 0.15)').replace('rgb', 'rgba');
-      try { skillsCtx.fillStyle = s.color + '26'; } catch(e) {}
-      skillsCtx.fill();
-
-      /* Star dot */
-      skillsCtx.beginPath();
-      skillsCtx.arc(s.x, s.y, s.hovered ? s.radius * 1.5 : s.radius, 0, Math.PI * 2);
-      skillsCtx.fillStyle = s.color;
-      skillsCtx.fill();
-
-      /* Label on hover */
-      if (s.hovered) {
-        skillsCtx.font = '12px "Orbitron", sans-serif';
-        skillsCtx.fillStyle = '#fff';
-        skillsCtx.textAlign = 'center';
-        skillsCtx.fillText(s.name, s.x, s.y - s.radius * 2 - 6);
-      }
-    }
+      });
+    });
   }
 
-  function handleSkillHover(e) {
-    var rect = skillsCanvas.getBoundingClientRect();
-    var mx = e.clientX - rect.left;
-    var my = e.clientY - rect.top;
-    var anyHovered = false;
-    for (var i = 0; i < skillStars.length; i++) {
-      var dx = skillStars[i].x - mx;
-      var dy = skillStars[i].y - my;
-      skillStars[i].hovered = Math.sqrt(dx * dx + dy * dy) < 20;
-      if (skillStars[i].hovered) anyHovered = true;
-    }
-    drawSkillsConstellation();
-    skillsCanvas.style.cursor = anyHovered ? 'pointer' : 'default';
-  }
-
-  /* ===== Loading Sequence ===== */
-  function startLoadingSequence() {
-    var messages = [
-      'Initializing star systems...',
-      'Mapping galaxy coordinates...',
-      'Loading planetary data...',
-      'Calibrating warp drive...',
-      'Fetching GitHub repositories...',
-      'Universe ready!'
-    ];
-    var progress = 0;
-    var step = 0;
-    var interval = setInterval(function () {
-      progress += Math.random() * 18 + 5;
-      if (progress > 100) progress = 100;
-      loadingBar.style.width = progress + '%';
-      if (progress >= (step + 1) * (100 / messages.length) && step < messages.length - 1) {
-        step++;
-        loadingText.textContent = messages[step];
-      }
-      if (progress >= 100) {
-        clearInterval(interval);
-        setTimeout(function () {
-          loadingScreen.classList.add('hidden');
-          state.loaded = true;
-          cursorGlow.classList.add('visible');
-        }, 500);
-      }
-    }, 200);
-  }
-
-  /* ===== Events ===== */
+  /* ===== Event Bindings ===== */
   function bindEvents() {
+    window.addEventListener('resize', function () {
+      positionPlanets();
+      starsCanvas.width = window.innerWidth;
+      starsCanvas.height = window.innerHeight;
+      initStars();
+    });
+
     /* Cursor */
     document.addEventListener('mousemove', function (e) {
       state.mouseX = e.clientX;
       state.mouseY = e.clientY;
       cursorGlow.style.left = e.clientX + 'px';
       cursorGlow.style.top = e.clientY + 'px';
+      if (!cursorGlow.classList.contains('visible')) {
+        cursorGlow.classList.add('visible');
+      }
     });
 
-    /* Hover detection for cursor */
     document.addEventListener('mouseover', function (e) {
-      var t = e.target;
-      if (t.closest && (t.closest('.planet') || t.closest('a') || t.closest('button') || t.closest('.repo-card') || t.closest('.nav-btn') || t.closest('.contact-card'))) {
+      var target = e.target;
+      if (target.closest && (target.closest('a') || target.closest('button') || target.closest('.planet') || target.closest('.repo-card') || target.closest('.contact-card') || target.closest('.exp-header'))) {
         cursorGlow.classList.add('hovering');
       } else {
         cursorGlow.classList.remove('hovering');
       }
     });
 
-    /* Planet clicks */
+    /* Planets */
     planets.forEach(function (planet) {
-      planet.addEventListener('click', function () {
+      planet.addEventListener('click', function (e) {
+        e.stopPropagation();
         var section = planet.dataset.section;
         openSection(section);
-        playClickSound();
       });
     });
 
     /* Panel close */
     panelCloses.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        closeActiveSection();
-      });
+      btn.addEventListener('click', closeAllPanels);
     });
 
-    /* Nav buttons */
+    /* Nav */
     navBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var section = btn.dataset.section;
-        openSection(section);
-        playClickSound();
+        openSection(btn.dataset.section);
       });
     });
 
     /* Zoom controls */
-    zoomInBtn.addEventListener('click', function () {
-      state.targetZoom = Math.min(MAX_ZOOM, state.targetZoom + 0.3);
-      playClickSound();
-    });
-    zoomOutBtn.addEventListener('click', function () {
-      state.targetZoom = Math.max(MIN_ZOOM, state.targetZoom - 0.3);
-      playClickSound();
-    });
-    zoomResetBtn.addEventListener('click', function () {
-      state.targetZoom = 1;
-      state.targetPanX = 0;
-      state.targetPanY = 0;
-      playClickSound();
-    });
+    zoomInBtn.addEventListener('click', function () { zoomBy(ZOOM_SPEED); });
+    zoomOutBtn.addEventListener('click', function () { zoomBy(-ZOOM_SPEED); });
+    zoomResetBtn.addEventListener('click', function () { state.targetZoom = 1; state.targetPanX = 0; state.targetPanY = 0; });
 
-    /* Mouse wheel zoom */
+    /* Scroll zoom */
     document.addEventListener('wheel', function (e) {
       if (state.activeSection) return;
       e.preventDefault();
-      var delta = e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED;
-      state.targetZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, state.targetZoom + delta));
+      zoomBy(e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED);
     }, { passive: false });
 
-    /* Drag to pan */
+    /* Pan: mouse */
     universe.addEventListener('mousedown', function (e) {
       if (e.target.closest('.planet')) return;
       state.isDragging = true;
@@ -370,22 +523,21 @@
     });
     document.addEventListener('mousemove', function (e) {
       if (!state.isDragging) return;
-      var dx = e.clientX - state.dragStartX;
-      var dy = e.clientY - state.dragStartY;
-      state.targetPanX = state.dragPanStartX + dx;
-      state.targetPanY = state.dragPanStartY + dy;
+      state.targetPanX = state.dragPanStartX + (e.clientX - state.dragStartX);
+      state.targetPanY = state.dragPanStartY + (e.clientY - state.dragStartY);
     });
     document.addEventListener('mouseup', function () {
       state.isDragging = false;
-      universe.style.cursor = 'grab';
+      universe.style.cursor = '';
     });
 
-    /* Touch support */
-    var touchStartX, touchStartY;
+    /* Touch pan/pinch */
     universe.addEventListener('touchstart', function (e) {
+      if (e.target.closest('.planet')) return;
       if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
+        state.isDragging = true;
+        state.dragStartX = e.touches[0].clientX;
+        state.dragStartY = e.touches[0].clientY;
         state.dragPanStartX = state.targetPanX;
         state.dragPanStartY = state.targetPanY;
       } else if (e.touches.length === 2) {
@@ -393,59 +545,52 @@
       }
     }, { passive: true });
     universe.addEventListener('touchmove', function (e) {
-      if (e.touches.length === 1 && touchStartX !== undefined) {
-        var dx = e.touches[0].clientX - touchStartX;
-        var dy = e.touches[0].clientY - touchStartY;
-        state.targetPanX = state.dragPanStartX + dx;
-        state.targetPanY = state.dragPanStartY + dy;
+      if (e.touches.length === 1 && state.isDragging) {
+        state.targetPanX = state.dragPanStartX + (e.touches[0].clientX - state.dragStartX);
+        state.targetPanY = state.dragPanStartY + (e.touches[0].clientY - state.dragStartY);
       } else if (e.touches.length === 2) {
         var newDist = getTouchDist(e.touches);
-        var scale = newDist / state.touchDist;
-        state.targetZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, state.zoom * scale));
+        var delta = (newDist - state.touchDist) * 0.005;
+        zoomBy(delta);
         state.touchDist = newDist;
       }
     }, { passive: true });
+    universe.addEventListener('touchend', function () {
+      state.isDragging = false;
+    });
 
-    /* Keyboard */
+    /* Escape key */
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         if (codeModal.classList.contains('active')) {
           codeModal.classList.remove('active');
         } else {
-          closeActiveSection();
+          closeAllPanels();
         }
       }
-      if (e.key === '+' || e.key === '=') { state.targetZoom = Math.min(MAX_ZOOM, state.targetZoom + 0.2); }
-      if (e.key === '-') { state.targetZoom = Math.max(MIN_ZOOM, state.targetZoom - 0.2); }
     });
 
     /* Code modal close */
-    codeModalClose.addEventListener('click', function () {
-      codeModal.classList.remove('active');
-    });
-    codeModal.addEventListener('click', function (e) {
-      if (e.target === codeModal) codeModal.classList.remove('active');
-    });
+    if (codeModalClose) {
+      codeModalClose.addEventListener('click', function () {
+        codeModal.classList.remove('active');
+      });
+    }
+    if (codeModal) {
+      codeModal.addEventListener('click', function (e) {
+        if (e.target === codeModal) {
+          codeModal.classList.remove('active');
+        }
+      });
+    }
 
-    /* Resize */
-    window.addEventListener('resize', function () {
-      starsCanvas.width = window.innerWidth;
-      starsCanvas.height = window.innerHeight;
-      initStars();
-      positionPlanets();
-    });
+    /* Experience collapsible */
+    initExpCollapse();
+  }
 
-    /* Easter egg: Konami code */
-    var konamiSeq = [];
-    var konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-    document.addEventListener('keydown', function (e) {
-      konamiSeq.push(e.keyCode);
-      if (konamiSeq.length > konamiCode.length) konamiSeq.shift();
-      if (konamiSeq.join(',') === konamiCode.join(',')) {
-        triggerEasterEgg();
-        konamiSeq = [];
-      }
-    });
+  /* ===== Zoom ===== */
+  function zoomBy(delta) {
+    state.targetZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, state.targetZoom + delta));
   }
 
   function getTouchDist(touches) {
@@ -454,213 +599,55 @@
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  /* ===== Section Management ===== */
-  function openSection(section) {
-    closeActiveSection();
-    var panel = document.getElementById('panel-' + section);
-    if (!panel) return;
-    state.activeSection = section;
-    panel.classList.add('active');
-
-    /* Zoom toward planet */
-    var pos = planetPositions[section];
-    if (pos) {
-      var cx = window.innerWidth / 2;
-      var cy = window.innerHeight / 2;
-      state.targetPanX = cx - (pos.xPct / 100 * window.innerWidth);
-      state.targetPanY = cy - (pos.yPct / 100 * window.innerHeight);
-      state.targetZoom = 1.5;
-    }
-
-    /* Update nav */
-    navBtns.forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.section === section);
-    });
-
-    /* Section-specific init */
-    if (section === 'projects' && state.repos.length === 0) {
-      fetchGitHubRepos();
-    }
-    if (section === 'skills') {
-      setTimeout(initSkillsConstellation, 100);
-    }
-  }
-
-  function closeActiveSection() {
-    state.activeSection = null;
-    panels.forEach(function (p) { p.classList.remove('active'); });
-    navBtns.forEach(function (b) { b.classList.remove('active'); });
-    state.targetZoom = 1;
-    state.targetPanX = 0;
-    state.targetPanY = 0;
-  }
-
-  /* ===== GitHub Integration ===== */
-  function fetchGitHubRepos() {
-    var container = document.getElementById('projects-container');
-    fetch('https://api.github.com/users/' + GITHUB_USER + '/repos?sort=updated&per_page=30')
-      .then(function (res) {
-        if (!res.ok) throw new Error('GitHub API error');
-        return res.json();
-      })
-      .then(function (repos) {
-        state.repos = repos;
-        renderRepos(repos, container);
-      })
-      .catch(function (err) {
-        container.innerHTML = '<div class="loading-repos"><p>⚠️ Could not fetch repositories. <br><small>' + escapeHtml(err.message) + '</small></p></div>';
-      });
-  }
-
-  function renderRepos(repos, container) {
-    if (!repos.length) {
-      container.innerHTML = '<div class="loading-repos"><p>No public repositories found.</p></div>';
-      return;
-    }
-    var html = '';
-    repos.forEach(function (repo) {
-      var langColor = getLanguageColor(repo.language);
-      html += '<div class="repo-card" data-repo="' + escapeHtml(repo.full_name) + '">';
-      html += '<h3>' + escapeHtml(repo.name) + '</h3>';
-      html += '<p class="repo-desc">' + escapeHtml(repo.description || 'No description') + '</p>';
-      html += '<div class="repo-meta">';
-      if (repo.language) {
-        html += '<span><span class="lang-dot" style="background:' + langColor + '"></span>' + escapeHtml(repo.language) + '</span>';
+  /* ===== Loading Sequence ===== */
+  function startLoadingSequence() {
+    var msgs = [
+      'Initializing star systems...',
+      'Generating nebula clouds...',
+      'Forming black hole...',
+      'Plotting planet orbits...',
+      'Calibrating warp drive...',
+      'Universe ready!'
+    ];
+    var progress = 0;
+    var msgIdx = 0;
+    var interval = setInterval(function () {
+      progress += 3 + Math.random() * 5;
+      if (progress > 100) progress = 100;
+      loadingBar.style.width = progress + '%';
+      if (progress > (msgIdx + 1) * (100 / msgs.length) && msgIdx < msgs.length - 1) {
+        msgIdx++;
+        loadingText.textContent = msgs[msgIdx];
       }
-      html += '<span><i class="fas fa-star"></i> ' + repo.stargazers_count + '</span>';
-      html += '<span><i class="fas fa-code-branch"></i> ' + repo.forks_count + '</span>';
-      html += '</div>';
-      html += '<div class="repo-actions">';
-      html += '<a href="' + escapeHtml(repo.html_url) + '" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> View</a>';
-      html += '<button onclick="window._viewCode(\'' + escapeHtml(repo.full_name) + '\')"><i class="fas fa-code"></i> Code</button>';
-      html += '</div>';
-      html += '</div>';
-    });
-    container.innerHTML = html;
-  }
-
-  /* ===== Code Viewer ===== */
-  window._viewCode = function (fullName) {
-    codeModal.classList.add('active');
-    codeModalLoading.style.display = 'block';
-    codeModalContent.parentElement.style.display = 'none';
-    codeModalTitle.textContent = fullName;
-
-    fetch('https://api.github.com/repos/' + fullName + '/readme', {
-      headers: { 'Accept': 'application/vnd.github.v3.raw' }
-    })
-      .then(function (res) {
-        if (!res.ok) throw new Error('README not found');
-        return res.text();
-      })
-      .then(function (text) {
-        codeModalLoading.style.display = 'none';
-        codeModalContent.parentElement.style.display = 'block';
-        codeModalContent.innerHTML = highlightSyntax(escapeHtml(text));
-      })
-      .catch(function () {
-        /* Try fetching file list instead */
-        fetch('https://api.github.com/repos/' + fullName + '/contents')
-          .then(function (r) { return r.json(); })
-          .then(function (files) {
-            codeModalLoading.style.display = 'none';
-            codeModalContent.parentElement.style.display = 'block';
-            var listing = '📁 Repository Files:\n\n';
-            if (Array.isArray(files)) {
-              files.forEach(function (f) {
-                listing += (f.type === 'dir' ? '📂 ' : '📄 ') + f.name + '\n';
-              });
-            }
-            codeModalContent.textContent = listing;
-          })
-          .catch(function () {
-            codeModalLoading.style.display = 'none';
-            codeModalContent.parentElement.style.display = 'block';
-            codeModalContent.textContent = 'Could not load repository content.';
-          });
-      });
-  };
-
-  /* ===== Syntax Highlighting (basic) ===== */
-  function highlightSyntax(text) {
-    /* Highlight markdown-like patterns */
-    text = text.replace(/(^|\n)(#{1,6}\s.+)/g, '$1<span class="fn">$2</span>');
-    text = text.replace(/`([^`]+)`/g, '<span class="str">`$1`</span>');
-    text = text.replace(/(https?:\/\/[^\s<]+)/g, '<span class="str">$1</span>');
-    text = text.replace(/(\*\*[^*]+\*\*)/g, '<span class="kw">$1</span>');
-    text = text.replace(/(^|\n)(\s*[-*]\s)/g, '$1<span class="num">$2</span>');
-    return text;
-  }
-
-  /* ===== Sound Effect ===== */
-  function playClickSound() {
-    try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.15);
-    } catch (e) { /* Audio not supported */ }
-  }
-
-  /* ===== Easter Egg ===== */
-  function triggerEasterEgg() {
-    var overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);animation:panelSlideIn 0.5s ease;';
-    overlay.innerHTML = '<div style="text-align:center;font-family:Orbitron,sans-serif;"><h1 style="font-size:3rem;margin-bottom:20px;">🎮 You found it!</h1><p style="color:#00d4ff;font-size:1.2rem;">Konami Code Activated!</p><p style="color:#888;margin-top:10px;">You\'re a true explorer of this universe.</p></div>';
-    document.body.appendChild(overlay);
-    overlay.addEventListener('click', function () {
-      document.body.removeChild(overlay);
-    });
-    setTimeout(function () {
-      if (overlay.parentNode) document.body.removeChild(overlay);
-    }, 5000);
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(function () {
+          loadingScreen.classList.add('hidden');
+          state.loaded = true;
+        }, 600);
+      }
+    }, 80);
   }
 
   /* ===== Animation Loop ===== */
   function animate() {
-    /* Lerp zoom and pan */
+    var time = performance.now();
+    drawStars(time);
+
+    /* Smooth zoom/pan */
     state.zoom += (state.targetZoom - state.zoom) * LERP;
     state.panX += (state.targetPanX - state.panX) * LERP;
     state.panY += (state.targetPanY - state.panY) * LERP;
+    universe.style.transform = 'translate(' + state.panX + 'px,' + state.panY + 'px) scale(' + state.zoom + ')';
 
-    universe.style.transform = 'translate(' + state.panX + 'px, ' + state.panY + 'px) scale(' + state.zoom + ')';
-
-    drawStars();
     animFrameId = requestAnimationFrame(animate);
   }
 
-  /* ===== Utility ===== */
-  function escapeHtml(str) {
-    if (!str) return '';
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
-  }
-
-  function getLanguageColor(lang) {
-    var colors = {
-      'JavaScript': '#f1e05a', 'Python': '#3572A5', 'TypeScript': '#2b7489',
-      'Java': '#b07219', 'C++': '#f34b7d', 'C': '#555555',
-      'HTML': '#e34c26', 'CSS': '#563d7c', 'Go': '#00ADD8',
-      'Rust': '#dea584', 'Ruby': '#701516', 'PHP': '#4F5D95',
-      'Shell': '#89e051', 'Jupyter Notebook': '#DA5B0B', 'Dart': '#00B4AB',
-      'Kotlin': '#A97BFF', 'Swift': '#ffac45', 'R': '#198CE7'
-    };
-    return colors[lang] || '#8b949e';
-  }
-
-  /* ===== Start ===== */
+  /* ===== Boot ===== */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
+
 })();
