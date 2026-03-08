@@ -160,7 +160,7 @@
       } else if (isDeleting && charIndex === 0) {
         isDeleting = false;
         phraseIndex = (phraseIndex + 1) % phrases.length;
-        delay = 400;
+        delay = 500;
       }
 
       setTimeout(type, delay);
