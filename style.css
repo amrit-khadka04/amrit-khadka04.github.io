@@ -1006,7 +1006,6 @@ body.theme-germany .timeline-marker {
    ────────────────────────────────────────────── */
 .research-card {
   position: relative;
-  border-left: 4px solid var(--accent);
   padding: 1.5rem 1.5rem 1.5rem 2rem;
   margin-bottom: 1.5rem;
   background: var(--bg-card);
