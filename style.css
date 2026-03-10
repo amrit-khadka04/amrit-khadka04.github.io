@@ -939,6 +939,291 @@ body.theme-germany .timeline-marker {
 }
 
 /* ──────────────────────────────────────────────
+   20a. Chapter Visualizations (India & Germany)
+   ────────────────────────────────────────────── */
+
+/* Flag stripe visualization */
+.chapter-viz {
+  display: flex;
+  gap: 0;
+  margin-top: 1.25rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: 6px;
+  max-width: 280px;
+  animation: vizSlideIn 1s var(--ease-out) both;
+}
+
+@keyframes vizSlideIn {
+  from { max-width: 0; opacity: 0; }
+  to   { max-width: 280px; opacity: 1; }
+}
+
+.flag-stripe {
+  flex: 1;
+  position: relative;
+}
+
+/* India flag stripes */
+.india-viz .stripe-saffron { background: #FF9933; }
+.india-viz .stripe-white   { background: #FFFFFF; display: flex; align-items: center; justify-content: center; }
+.india-viz .stripe-green   { background: #138808; }
+
+.ashoka-wheel {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  border: 1px solid #000080;
+}
+
+/* Germany flag stripes */
+.germany-viz .stripe-black { background: #000000; }
+.germany-viz .stripe-red   { background: #DD0000; }
+.germany-viz .stripe-gold  { background: #FFCC00; }
+
+/* Section decorative borders */
+#india::before,
+#germany::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.7;
+}
+
+#india::before {
+  background: linear-gradient(90deg, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%);
+}
+
+#germany::before {
+  background: linear-gradient(90deg, #000000 33%, #DD0000 33%, #DD0000 66%, #FFCC00 66%);
+}
+
+/* ──────────────────────────────────────────────
+   20b. Research Card & Visualization
+   ────────────────────────────────────────────── */
+.research-card {
+  position: relative;
+  border-left: 4px solid var(--accent);
+  padding: 1.5rem 1.5rem 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background var(--transition-theme), border-color var(--transition-base),
+              transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.research-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  border-left-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px var(--accent-glow);
+}
+
+.research-card ul {
+  margin-top: 1rem;
+}
+
+.research-card li {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  padding-left: 1rem;
+  position: relative;
+  margin-bottom: 0.35rem;
+}
+
+.research-card li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+/* Research visualization */
+.research-viz {
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Pipeline flow */
+.pipeline-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+}
+
+.pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition-fast), transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+  min-width: 100px;
+}
+
+.pipeline-node:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.pipeline-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  color: var(--bg);
+  font-size: 1rem;
+}
+
+.pipeline-node span {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-weight: 500;
+}
+
+.pipeline-arrow {
+  color: var(--accent);
+  font-size: 0.9rem;
+  animation: arrowPulse 2s ease-in-out infinite;
+}
+
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.4; transform: translateX(0); }
+  50%      { opacity: 1; transform: translateX(3px); }
+}
+
+/* Workflow badges */
+.workflow-badges {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.workflow-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.workflow-badge:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.workflow-badge i {
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+
+.workflow-badge i.fa-arrow-right {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+}
+
+.workflow-badge span {
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+/* Study stat circle */
+.study-stat {
+  display: flex;
+  justify-content: center;
+}
+
+.stat-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  box-shadow: 0 0 16px var(--accent-glow);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.stat-circle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ──────────────────────────────────────────────
+   20c. Experience & Education List Styling
+   ────────────────────────────────────────────── */
+.exp-card ul,
+.research-card ul {
+  list-style: none;
+}
+
+.exp-card li {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  padding-left: 1rem;
+  position: relative;
+  margin-bottom: 0.35rem;
+}
+
+.exp-card li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+/* ──────────────────────────────────────────────
    21. Utility Classes
    ────────────────────────────────────────────── */
 .sr-only {
@@ -1069,6 +1354,40 @@ body.theme-germany .timeline-marker {
 
   .project-card.featured {
     padding: 1.5rem;
+  }
+
+  /* Research card responsive */
+  .research-card {
+    padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+  }
+
+  .pipeline-flow {
+    gap: 0.35rem;
+    padding: 1rem;
+  }
+
+  .pipeline-node {
+    padding: 0.5rem 0.75rem;
+    min-width: 70px;
+  }
+
+  .pipeline-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .pipeline-node span {
+    font-size: 0.65rem;
+  }
+
+  .workflow-badges {
+    gap: 0.5rem;
+  }
+
+  .workflow-badge {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.72rem;
   }
 
   /* Add bottom padding for fixed bottom nav */
