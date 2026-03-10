@@ -765,6 +765,9 @@ body.theme-germany .timeline-marker {
 
 /* Featured project */
 .featured-projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 3rem;
 }
 
@@ -773,6 +776,20 @@ body.theme-germany .timeline-marker {
   padding: 2rem;
   border-top: 3px solid transparent;
   border-image: linear-gradient(90deg, var(--accent), var(--accent-secondary)) 1;
+}
+
+.project-card.featured h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  padding-right: 6rem; /* clearance for .project-badge positioned top-right */
+}
+
+.project-card.featured > p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
 }
 
 .project-badge {
@@ -787,6 +804,28 @@ body.theme-germany .timeline-marker {
   border-radius: var(--radius-pill);
   background: var(--accent);
   color: var(--bg);
+}
+
+/* Project highlights list */
+.project-highlights {
+  list-style: none;
+  margin-top: 0.75rem;
+}
+
+.project-highlights li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  padding-left: 1rem;
+  position: relative;
+  margin-bottom: 0.3rem;
+}
+
+.project-highlights li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
 }
 
 /* GitHub repo cards */
@@ -1354,6 +1393,15 @@ body.theme-germany .timeline-marker {
 
   .project-card.featured {
     padding: 1.5rem;
+  }
+
+  .project-card.featured h4 {
+    padding-right: 0;
+    margin-top: 1.75rem;
+  }
+
+  .featured-projects {
+    grid-template-columns: 1fr;
   }
 
   /* Research card responsive */
