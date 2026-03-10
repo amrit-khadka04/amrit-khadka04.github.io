@@ -1,653 +1,422 @@
-/* ============================================
-   Amrit Khadka — Universe Portfolio JS
-   ============================================ */
-
+/**
+ * ============================================================
+ *  script.js — Amrit Khadka Portfolio
+ *  Handles: loader, scroll-progress, smooth navigation,
+ *           reveal-on-scroll, country-theme transitions,
+ *           active-nav highlighting, and GitHub repo fetching.
+ * ============================================================
+ */
 (function () {
   'use strict';
 
-  /* ===== Configuration ===== */
-  var GITHUB_USER = 'amritkc';
-  var STAR_COUNT = 500;
-  var SHOOTING_STAR_INTERVAL = 4000;
-  var SUPERNOVA_INTERVAL = 12000;
+  /* -------------------------------------------------------
+   *  0. CONSTANTS & DOM REFERENCES
+   * ------------------------------------------------------- */
+  const GITHUB_USER = 'Amritkc';
+  const GITHUB_API  = `https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=30`;
 
-  /* Planet positions (percentage-based) */
-  var planetPositions = {
-    home:       { xPct: 50, yPct: 30 },
-    about:      { xPct: 18, yPct: 20 },
-    education:  { xPct: 82, yPct: 18 },
-    skills:     { xPct: 86, yPct: 50 },
-    projects:   { xPct: 75, yPct: 82 },
-    experience: { xPct: 18, yPct: 78 },
-    contact:    { xPct: 50, yPct: 92 }
+  const loader             = document.getElementById('loader');
+  const scrollProgress     = document.getElementById('scroll-progress');
+  const themeOverlay       = document.getElementById('theme-overlay');
+  const countryIndicator   = document.getElementById('country-indicator');
+  const countryFlag        = countryIndicator ? countryIndicator.querySelector('.country-flag') : null;
+  const sideNavLinks       = document.querySelectorAll('#side-nav a[data-section]');
+  const sections           = document.querySelectorAll('section.section');
+  const revealElements     = document.querySelectorAll('.reveal');
+  const projectsContainer  = document.getElementById('projects-container');
+
+  /** Language → colour map for GitHub repo language dots */
+  const LANG_COLORS = {
+    JavaScript:        '#f1e05a',
+    TypeScript:        '#3178c6',
+    Python:            '#3572A5',
+    Java:              '#b07219',
+    Kotlin:            '#A97BFF',
+    Swift:             '#F05138',
+    HTML:              '#e34c26',
+    CSS:               '#563d7c',
+    Shell:             '#89e051',
+    Jupyter:           '#DA5B0B',
+    'Jupyter Notebook':'#DA5B0B',
+    Dart:              '#00B4AB',
+    C:                 '#555555',
+    'C++':             '#f34b7d',
+    Go:                '#00ADD8',
+    Ruby:              '#701516',
+    PHP:               '#4F5D95',
+    Rust:              '#dea584',
   };
 
-  /* Star colors for variety */
-  var starColors = [
-    { r: 255, g: 255, b: 255 },
-    { r: 200, g: 220, b: 255 },
-    { r: 255, g: 220, b: 200 },
-    { r: 180, g: 200, b: 255 },
-    { r: 255, g: 200, b: 180 },
-    { r: 220, g: 255, b: 220 },
-    { r: 255, g: 180, b: 220 }
-  ];
-
-  /* ===== State ===== */
-  var state = {
-    zoom: 1,
-    targetZoom: 1,
-    panX: 0, panY: 0,
-    targetPanX: 0, targetPanY: 0,
-    isDragging: false,
-    dragStartX: 0, dragStartY: 0,
-    dragPanStartX: 0, dragPanStartY: 0,
-    mouseX: 0, mouseY: 0,
-    activeSection: null,
-    loaded: false,
-    repos: [],
-    touchDist: 0,
-    rocketAnimating: false
-  };
-
-  var MIN_ZOOM = 0.5;
-  var MAX_ZOOM = 3.0;
-  var ZOOM_SPEED = 0.15;
-  var LERP = 0.1;
-
-  /* ===== DOM References ===== */
-  var loadingScreen, loadingBar, loadingText;
-  var cursorGlow, starsCanvas, starsCtx;
-  var universe, planets;
-  var panels, panelCloses;
-  var zoomInBtn, zoomOutBtn, zoomResetBtn;
-  var navBtns;
-  var codeModal, codeModalTitle, codeModalContent, codeModalClose, codeModalLoading;
-  var shootingStarsEl, supernovaContainer;
-  var rocketEl;
-  var stars = [];
-  var animFrameId;
-
-  /* ===== Initialization ===== */
-  function init() {
-    cacheDOM();
-    positionPlanets();
-    initStars();
-    initShootingStars();
-    initSupernova();
-    bindEvents();
-    startLoadingSequence();
-    animate();
+  /* -------------------------------------------------------
+   *  1. LOADING SCREEN
+   *  Simulate a brief loading period then hide the loader.
+   * ------------------------------------------------------- */
+  function hideLoader() {
+    setTimeout(function () {
+      if (loader) loader.classList.add('hidden');
+    }, 1500);
   }
 
-  function cacheDOM() {
-    loadingScreen = document.getElementById('loading-screen');
-    loadingBar = document.getElementById('loading-bar');
-    loadingText = document.getElementById('loading-text');
-    cursorGlow = document.getElementById('cursor-glow');
-    starsCanvas = document.getElementById('stars-canvas');
-    starsCtx = starsCanvas.getContext('2d');
-    universe = document.getElementById('universe');
-    planets = document.querySelectorAll('.planet');
-    panels = document.querySelectorAll('.section-panel');
-    panelCloses = document.querySelectorAll('.panel-close');
-    zoomInBtn = document.getElementById('zoom-in');
-    zoomOutBtn = document.getElementById('zoom-out');
-    zoomResetBtn = document.getElementById('zoom-reset');
-    navBtns = document.querySelectorAll('.nav-btn');
-    codeModal = document.getElementById('code-modal');
-    codeModalTitle = document.getElementById('code-modal-title');
-    codeModalContent = document.querySelector('#code-modal-content code');
-    codeModalClose = document.getElementById('code-modal-close');
-    codeModalLoading = document.getElementById('code-modal-loading');
-    shootingStarsEl = document.getElementById('shooting-stars');
-    supernovaContainer = document.getElementById('supernova-container');
-    rocketEl = document.getElementById('rocket');
+  /* -------------------------------------------------------
+   *  2. SMOOTH-SCROLL NAV
+   *  Side-nav links smooth-scroll to their target section
+   *  and update the URL hash without causing a jump.
+   * ------------------------------------------------------- */
+  function initSmoothScroll() {
+    sideNavLinks.forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = link.getAttribute('data-section');
+        const target   = document.getElementById(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', '#' + targetId);
+        }
+      });
+    });
   }
 
-  /* ===== Planet Positioning ===== */
-  function positionPlanets() {
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    planets.forEach(function (planet) {
-      var section = planet.dataset.section;
-      var pos = planetPositions[section];
-      if (pos) {
-        planet.style.left = (pos.xPct / 100 * w - planet.offsetWidth / 2) + 'px';
-        planet.style.top = (pos.yPct / 100 * h - planet.offsetHeight / 2) + 'px';
+  /* -------------------------------------------------------
+   *  3. SCROLL-PROGRESS BAR
+   *  On scroll, calculate percentage and set bar width.
+   * ------------------------------------------------------- */
+  function updateScrollProgress() {
+    const scrollTop     = window.scrollY;
+    const docHeight     = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    if (scrollProgress) {
+      scrollProgress.style.width = scrollPercent + '%';
+    }
+  }
+
+  /* -------------------------------------------------------
+   *  4. REVEAL-ON-SCROLL  (IntersectionObserver)
+   *  Observe all .reveal elements; add class "visible"
+   *  once they scroll into view, then unobserve.
+   * ------------------------------------------------------- */
+  function initRevealObserver() {
+    if (!('IntersectionObserver' in window)) {
+      // Fallback: make everything visible immediately
+      revealElements.forEach(function (el) { el.classList.add('visible'); });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    revealElements.forEach(function (el) { observer.observe(el); });
+  }
+
+  /* -------------------------------------------------------
+   *  5. COUNTRY-THEME TRANSITIONS  (the star feature)
+   *  Uses IntersectionObserver on every <section> to detect
+   *  which "chapter" is dominant and swap body classes,
+   *  flag emoji, and overlay gradient accordingly.
+   * ------------------------------------------------------- */
+  let currentTheme = 'neutral';
+
+  /**
+   * Apply a theme to the page.
+   * @param {'neutral'|'india'|'germany'} theme
+   */
+  function applyTheme(theme) {
+    if (theme === currentTheme) return;
+    currentTheme = theme;
+
+    const body = document.body;
+
+    // Swap body classes
+    body.classList.remove('theme-india', 'theme-germany');
+    if (theme === 'india')   body.classList.add('theme-india');
+    if (theme === 'germany') body.classList.add('theme-germany');
+
+    // Update country flag emoji
+    if (countryFlag) {
+      if (theme === 'india') {
+        countryFlag.textContent = '\u{1F1EE}\u{1F1F3}';
+      } else if (theme === 'germany') {
+        countryFlag.textContent = '\u{1F1E9}\u{1F1EA}';
+      } else {
+        countryFlag.textContent = '';
+      }
+    }
+
+    // Show / hide the indicator badge
+    if (countryIndicator) {
+      countryIndicator.classList.toggle('visible', theme !== 'neutral');
+    }
+
+    // Overlay gradient
+    if (themeOverlay) {
+      if (theme === 'india') {
+        themeOverlay.style.background =
+          'radial-gradient(ellipse at 50% 0%, rgba(255,153,51,0.08) 0%, transparent 70%)';
+      } else if (theme === 'germany') {
+        themeOverlay.style.background =
+          'radial-gradient(ellipse at 50% 0%, rgba(255,206,0,0.08) 0%, transparent 70%)';
+      } else {
+        themeOverlay.style.background = 'transparent';
+      }
+    }
+  }
+
+  /** Debounce helper — returns a wrapper that delays execution. */
+  function debounce(fn, delay) {
+    let timer = null;
+    return function () {
+      const context = this;
+      const args    = arguments;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function () {
+        fn.apply(context, args);
+      }, delay);
+    };
+  }
+
+  /**
+   * Set up a single IntersectionObserver for section-level
+   * detection (themes + active nav).  A debounced handler
+   * prevents jitter during fast scrolling.
+   */
+  function initSectionObserver() {
+    if (!('IntersectionObserver' in window) || !sections.length) return;
+
+    // Debounce rapid theme changes during fast scroll
+    const debouncedApplyTheme = debounce(applyTheme, 80);
+
+    const observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            const theme = entry.target.dataset.theme || 'neutral';
+            debouncedApplyTheme(theme);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    sections.forEach(function (sec) { observer.observe(sec); });
+  }
+
+  /* -------------------------------------------------------
+   *  6. ACTIVE NAV HIGHLIGHTING
+   *  On scroll, determine which section is in view and
+   *  toggle the "active" class on the matching nav link.
+   * ------------------------------------------------------- */
+  function highlightActiveNav() {
+    const scrollY  = window.scrollY + window.innerHeight / 3;
+    let activeId   = '';
+
+    sections.forEach(function (sec) {
+      if (sec.offsetTop <= scrollY) {
+        activeId = sec.id;
+      }
+    });
+
+    sideNavLinks.forEach(function (link) {
+      if (link.dataset.section === activeId) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
       }
     });
   }
 
-  /* ===== Star Field ===== */
-  function initStars() {
-    starsCanvas.width = window.innerWidth;
-    starsCanvas.height = window.innerHeight;
-    stars = [];
-    for (var i = 0; i < STAR_COUNT; i++) {
-      var colorObj = starColors[Math.floor(Math.random() * starColors.length)];
-      stars.push({
-        x: Math.random() * starsCanvas.width,
-        y: Math.random() * starsCanvas.height,
-        radius: Math.random() * 1.8 + 0.3,
-        alpha: Math.random() * 0.7 + 0.3,
-        twinkleSpeed: Math.random() * 0.02 + 0.005,
-        twinkleOffset: Math.random() * Math.PI * 2,
-        color: colorObj
-      });
+  /* -------------------------------------------------------
+   *  7. GITHUB REPOS
+   *  Fetch public repos, skip forks, render cards.
+   *  Uses textContent for user-generated strings to
+   *  prevent XSS; innerHTML is only used with safe markup.
+   * ------------------------------------------------------- */
+
+  /**
+   * Create a single repo-card DOM element.
+   * All user-supplied text is set via textContent.
+   * @param {Object} repo  GitHub API repo object
+   * @returns {HTMLElement}
+   */
+  function createRepoCard(repo) {
+    const card = document.createElement('div');
+    card.className = 'repo-card';
+
+    // --- Name ---
+    const h4 = document.createElement('h4');
+    h4.textContent = repo.name;
+    card.appendChild(h4);
+
+    // --- Description ---
+    const desc = document.createElement('p');
+    desc.textContent = repo.description || 'No description provided.';
+    card.appendChild(desc);
+
+    // --- Meta row (language, stars, forks) ---
+    const meta = document.createElement('div');
+    meta.className = 'repo-meta';
+
+    if (repo.language) {
+      const langSpan = document.createElement('span');
+      langSpan.className = 'repo-lang';
+
+      const dot = document.createElement('span');
+      dot.className = 'lang-dot';
+      dot.style.background = LANG_COLORS[repo.language] || '#ccc';
+
+      langSpan.appendChild(dot);
+      langSpan.appendChild(document.createTextNode(' ' + repo.language));
+      meta.appendChild(langSpan);
     }
-  }
 
-  function drawStars(time) {
-    starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
-      var twinkle = Math.sin(time * s.twinkleSpeed + s.twinkleOffset);
-      var alpha = s.alpha + twinkle * 0.3;
-      if (alpha < 0.1) alpha = 0.1;
-      if (alpha > 1) alpha = 1;
-      starsCtx.beginPath();
-      starsCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-      starsCtx.fillStyle = 'rgba(' + s.color.r + ',' + s.color.g + ',' + s.color.b + ',' + alpha + ')';
-      starsCtx.fill();
-      if (s.radius > 1.2) {
-        starsCtx.beginPath();
-        starsCtx.arc(s.x, s.y, s.radius * 2, 0, Math.PI * 2);
-        starsCtx.fillStyle = 'rgba(' + s.color.r + ',' + s.color.g + ',' + s.color.b + ',' + (alpha * 0.15) + ')';
-        starsCtx.fill();
-      }
+    // Stars
+    const starSpan = document.createElement('span');
+    starSpan.className = 'repo-stat';
+    const starIcon = document.createElement('i');
+    starIcon.className = 'fa-regular fa-star';
+    starSpan.appendChild(starIcon);
+    starSpan.appendChild(document.createTextNode(' ' + repo.stargazers_count));
+    meta.appendChild(starSpan);
+
+    // Forks
+    const forkSpan = document.createElement('span');
+    forkSpan.className = 'repo-stat';
+    const forkIcon = document.createElement('i');
+    forkIcon.className = 'fa-solid fa-code-fork';
+    forkSpan.appendChild(forkIcon);
+    forkSpan.appendChild(document.createTextNode(' ' + repo.forks_count));
+    meta.appendChild(forkSpan);
+
+    card.appendChild(meta);
+
+    // --- Links row ---
+    const linksDiv = document.createElement('div');
+    linksDiv.className = 'repo-links';
+
+    const codeLink = document.createElement('a');
+    codeLink.className = 'repo-link';
+    codeLink.href = repo.html_url;
+    codeLink.target = '_blank';
+    codeLink.rel = 'noopener noreferrer';
+    const codeLinkIcon = document.createElement('i');
+    codeLinkIcon.className = 'fa-brands fa-github';
+    codeLink.appendChild(codeLinkIcon);
+    codeLink.appendChild(document.createTextNode(' Code'));
+    linksDiv.appendChild(codeLink);
+
+    if (repo.homepage) {
+      const liveLink = document.createElement('a');
+      liveLink.className = 'repo-link';
+      liveLink.href = repo.homepage;
+      liveLink.target = '_blank';
+      liveLink.rel = 'noopener noreferrer';
+      const liveLinkIcon = document.createElement('i');
+      liveLinkIcon.className = 'fa-solid fa-arrow-up-right-from-square';
+      liveLink.appendChild(liveLinkIcon);
+      liveLink.appendChild(document.createTextNode(' Live'));
+      linksDiv.appendChild(liveLink);
     }
+
+    card.appendChild(linksDiv);
+    return card;
   }
 
-  /* ===== Shooting Stars ===== */
-  function initShootingStars() {
-    createShootingStar();
-    setInterval(createShootingStar, SHOOTING_STAR_INTERVAL);
-  }
+  /** Fetch repos from GitHub API and render cards. */
+  async function fetchGitHubRepos() {
+    if (!projectsContainer) return;
 
-  function createShootingStar() {
-    if (!state.loaded) return;
-    var el = document.createElement('div');
-    el.className = 'shooting-star';
-    var startX = Math.random() * window.innerWidth * 0.7;
-    var startY = Math.random() * window.innerHeight * 0.5;
-    var angle = 15 + Math.random() * 30;
-    el.style.left = startX + 'px';
-    el.style.top = startY + 'px';
-    el.style.transform = 'rotate(' + angle + 'deg)';
-    el.style.width = (60 + Math.random() * 80) + 'px';
-    shootingStarsEl.appendChild(el);
-    setTimeout(function () {
-      if (el.parentNode) el.parentNode.removeChild(el);
-    }, 1200);
-  }
+    // Loading state
+    const loadingP = document.createElement('p');
+    loadingP.className = 'loading-text';
+    const spinnerIcon = document.createElement('i');
+    spinnerIcon.className = 'fa-solid fa-spinner fa-spin';
+    loadingP.appendChild(spinnerIcon);
+    loadingP.appendChild(document.createTextNode(' Loading repositories\u2026'));
+    projectsContainer.innerHTML = '';
+    projectsContainer.appendChild(loadingP);
 
-  /* ===== Supernova ===== */
-  function initSupernova() {
-    setInterval(createSupernova, SUPERNOVA_INTERVAL);
-  }
-
-  function createSupernova() {
-    if (!state.loaded) return;
-    var el = document.createElement('div');
-    el.className = 'supernova';
-    var x = Math.random() * window.innerWidth;
-    var y = Math.random() * window.innerHeight;
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    var hue = Math.floor(Math.random() * 360);
-    el.style.background = 'radial-gradient(circle, hsla(' + hue + ',100%,80%,0.9), hsla(' + hue + ',80%,50%,0.5), transparent)';
-    supernovaContainer.appendChild(el);
-    setTimeout(function () {
-      if (el.parentNode) el.parentNode.removeChild(el);
-    }, 2500);
-  }
-
-  /* ===== Whoosh Sound ===== */
-  var audioCtx = null;
-  function getAudioContext() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    return audioCtx;
-  }
-
-  function playWhoosh() {
     try {
-      var ctx = getAudioContext();
-      if (ctx.state === 'suspended') ctx.resume();
-      var bufferSize = Math.floor(ctx.sampleRate * 0.5);
-      var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      var data = buffer.getChannelData(0);
-      for (var i = 0; i < bufferSize; i++) {
-        var t = i / bufferSize;
-        var envelope = Math.sin(t * Math.PI);
-        data[i] = (Math.random() * 2 - 1) * envelope * 0.3;
-      }
-      var source = ctx.createBufferSource();
-      source.buffer = buffer;
-      var filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(1200, ctx.currentTime);
-      filter.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.5);
-      filter.Q.value = 0.8;
-      var gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      source.start();
-    } catch (e) {
-      /* Audio not available */
-    }
-  }
+      const res = await fetch(GITHUB_API);
+      if (!res.ok) throw new Error('GitHub API responded with status ' + res.status);
+      const repos = await res.json();
 
-  /* ===== Rocket Travel Animation ===== */
-  function animateRocket(targetSection, callback) {
-    if (state.rocketAnimating) return;
-    state.rocketAnimating = true;
+      const filtered = repos.filter(function (r) { return !r.fork; });
 
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    var startX = w / 2;
-    var startY = h / 2;
-    var targetPos = planetPositions[targetSection];
-    if (!targetPos) {
-      state.rocketAnimating = false;
-      callback();
-      return;
-    }
-    var endX = targetPos.xPct / 100 * w;
-    var endY = targetPos.yPct / 100 * h;
+      // Clear loading state
+      projectsContainer.innerHTML = '';
 
-    var dx = endX - startX;
-    var dy = endY - startY;
-    var angle = Math.atan2(dy, dx) * (180 / Math.PI) - 45;
-
-    rocketEl.style.left = startX + 'px';
-    rocketEl.style.top = startY + 'px';
-    rocketEl.querySelector('.rocket-body').style.transform = 'rotate(' + angle + 'deg)';
-    rocketEl.classList.add('active');
-
-    playWhoosh();
-
-    var duration = 800;
-    var startTime = performance.now();
-
-    function step(currentTime) {
-      var elapsed = currentTime - startTime;
-      var progress = Math.min(elapsed / duration, 1);
-      var ease = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-      var cx = startX + dx * ease;
-      var cy = startY + dy * ease;
-      rocketEl.style.left = cx + 'px';
-      rocketEl.style.top = cy + 'px';
-
-      createRocketTrailParticle(cx, cy);
-
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        rocketEl.classList.remove('active');
-        state.rocketAnimating = false;
-        callback();
-      }
-    }
-
-    requestAnimationFrame(step);
-  }
-
-  var MAX_TRAIL_PARTICLES = 30;
-  var activeTrailParticles = 0;
-
-  function createRocketTrailParticle(x, y) {
-    if (activeTrailParticles >= MAX_TRAIL_PARTICLES) return;
-    activeTrailParticles++;
-    var particle = document.createElement('div');
-    particle.style.cssText = 'position:fixed;width:4px;height:4px;border-radius:50%;pointer-events:none;z-index:9998;' +
-      'left:' + x + 'px;top:' + y + 'px;' +
-      'background:radial-gradient(circle,rgba(0,212,255,0.8),rgba(168,85,247,0.4),transparent);' +
-      'box-shadow:0 0 6px rgba(0,212,255,0.6);';
-    document.body.appendChild(particle);
-
-    var size = 4;
-    var opacity = 1;
-    function fadeOut() {
-      size += 0.5;
-      opacity -= 0.05;
-      if (opacity <= 0) {
-        if (particle.parentNode) particle.parentNode.removeChild(particle);
-        activeTrailParticles--;
+      if (filtered.length === 0) {
+        const empty = document.createElement('p');
+        empty.textContent = 'No repositories found.';
+        projectsContainer.appendChild(empty);
         return;
       }
-      particle.style.width = size + 'px';
-      particle.style.height = size + 'px';
-      particle.style.opacity = opacity;
-      requestAnimationFrame(fadeOut);
+
+      const fragment = document.createDocumentFragment();
+      filtered.forEach(function (repo) {
+        fragment.appendChild(createRepoCard(repo));
+      });
+      projectsContainer.appendChild(fragment);
+
+    } catch (err) {
+      console.error('Failed to load GitHub repos:', err);
+      projectsContainer.innerHTML = '';
+
+      const errorP = document.createElement('p');
+      errorP.className = 'error-text';
+      errorP.textContent = 'Could not load repositories. ';
+
+      const fallback = document.createElement('a');
+      fallback.href = 'https://github.com/' + GITHUB_USER;
+      fallback.target = '_blank';
+      fallback.rel = 'noopener noreferrer';
+      fallback.textContent = 'Visit GitHub \u2192';
+
+      errorP.appendChild(fallback);
+      projectsContainer.appendChild(errorP);
     }
-    requestAnimationFrame(fadeOut);
   }
 
-  /* ===== Panel Management ===== */
-  function openSection(section) {
-    if (state.activeSection === section) return;
-    closeAllPanels();
-    var panel = document.getElementById('panel-' + section);
-    if (!panel) return;
+  /* -------------------------------------------------------
+   *  8. SCROLL-EVENT HANDLER  (throttled via rAF)
+   *  A single scroll listener batches progress-bar and
+   *  active-nav updates inside requestAnimationFrame for
+   *  smooth 60 fps performance.
+   * ------------------------------------------------------- */
+  let scrollTicking = false;
 
-    if (state.rocketAnimating) return;
-
-    animateRocket(section, function () {
-      panel.classList.add('active');
-      state.activeSection = section;
-      updateNavActive(section);
-
-      if (section === 'projects' && state.repos.length === 0) {
-        fetchGitHubRepos();
-      }
-    });
-  }
-
-  function closeAllPanels() {
-    panels.forEach(function (p) { p.classList.remove('active'); });
-    state.activeSection = null;
-    updateNavActive(null);
-  }
-
-  function updateNavActive(section) {
-    navBtns.forEach(function (btn) {
-      if (btn.dataset.section === section) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-  }
-
-  /* ===== GitHub Repos ===== */
-  function fetchGitHubRepos() {
-    var container = document.getElementById('projects-container');
-    fetch('https://api.github.com/users/' + GITHUB_USER + '/repos?sort=updated&per_page=30')
-      .then(function (r) { return r.json(); })
-      .then(function (repos) {
-        state.repos = repos;
-        renderRepos(repos, container);
-      })
-      .catch(function () {
-        container.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;">Could not fetch repos. Try again later.</p>';
+  function onScroll() {
+    if (!scrollTicking) {
+      requestAnimationFrame(function () {
+        updateScrollProgress();
+        highlightActiveNav();
+        scrollTicking = false;
       });
-  }
-
-  function renderRepos(repos, container) {
-    if (!repos || !repos.length) {
-      container.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;">No repositories found.</p>';
-      return;
+      scrollTicking = true;
     }
-
-    var langColors = {
-      JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572a5',
-      Java: '#b07219', Kotlin: '#A97BFF', Swift: '#F05138',
-      HTML: '#e34c26', CSS: '#563d7c', Shell: '#89e051',
-      'Jupyter Notebook': '#DA5B0B', Dart: '#00B4AB', C: '#555555',
-      'C++': '#f34b7d', Go: '#00ADD8', Rust: '#dea584', Ruby: '#701516'
-    };
-
-    var html = '';
-    repos.forEach(function (repo) {
-      if (repo.fork) return;
-      var lang = repo.language || '';
-      var langDot = lang ? '<span class="repo-lang"><span class="lang-dot" style="background:' + (langColors[lang] || '#888') + '"></span>' + lang + '</span>' : '';
-      var desc = repo.description ? escapeHtml(repo.description) : 'No description';
-      if (desc.length > 120) desc = desc.substring(0, 120) + '...';
-
-      html += '<div class="repo-card glass-card">' +
-        '<h4><i class="fas fa-code-branch"></i> ' + escapeHtml(repo.name) + '</h4>' +
-        '<p>' + desc + '</p>' +
-        '<div class="repo-meta">' + langDot +
-        '<span><i class="fas fa-star"></i> ' + repo.stargazers_count + '</span>' +
-        '<span><i class="fas fa-code-branch"></i> ' + repo.forks_count + '</span>' +
-        '</div>' +
-        '<div class="repo-links">' +
-        '<a href="' + escapeHtml(repo.html_url) + '" target="_blank" rel="noopener" class="repo-link"><i class="fab fa-github"></i> Repo</a>' +
-        (repo.homepage ? '<a href="' + escapeHtml(repo.homepage) + '" target="_blank" rel="noopener" class="repo-link"><i class="fas fa-external-link-alt"></i> Live</a>' : '') +
-        '</div></div>';
-    });
-
-    container.innerHTML = html || '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;">No repositories found.</p>';
   }
 
-  function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
-  }
+  /* -------------------------------------------------------
+   *  INIT — wire everything up on DOMContentLoaded
+   * ------------------------------------------------------- */
+  document.addEventListener('DOMContentLoaded', function () {
+    hideLoader();
+    initSmoothScroll();
+    initRevealObserver();
+    initSectionObserver();
+    fetchGitHubRepos();
 
-  /* ===== Experience Collapsible ===== */
-  function initExpCollapse() {
-    var headers = document.querySelectorAll('.exp-header[data-collapse]');
-    headers.forEach(function (header) {
-      header.addEventListener('click', function () {
-        var targetId = header.getAttribute('data-collapse');
-        var details = document.getElementById(targetId);
-        var toggle = header.querySelector('.exp-toggle');
-        if (!details) return;
+    window.addEventListener('scroll', onScroll, { passive: true });
 
-        var isOpen = details.classList.contains('open');
-        /* Close all first */
-        document.querySelectorAll('.exp-details').forEach(function (d) { d.classList.remove('open'); });
-        document.querySelectorAll('.exp-toggle').forEach(function (t) { t.classList.remove('rotated'); });
-
-        if (!isOpen) {
-          details.classList.add('open');
-          if (toggle) toggle.classList.add('rotated');
-        }
-      });
-    });
-  }
-
-  /* ===== Event Bindings ===== */
-  function bindEvents() {
-    window.addEventListener('resize', function () {
-      positionPlanets();
-      starsCanvas.width = window.innerWidth;
-      starsCanvas.height = window.innerHeight;
-      initStars();
-    });
-
-    /* Cursor */
-    document.addEventListener('mousemove', function (e) {
-      state.mouseX = e.clientX;
-      state.mouseY = e.clientY;
-      cursorGlow.style.left = e.clientX + 'px';
-      cursorGlow.style.top = e.clientY + 'px';
-      if (!cursorGlow.classList.contains('visible')) {
-        cursorGlow.classList.add('visible');
-      }
-    });
-
-    document.addEventListener('mouseover', function (e) {
-      var target = e.target;
-      if (target.closest && (target.closest('a') || target.closest('button') || target.closest('.planet') || target.closest('.repo-card') || target.closest('.contact-card') || target.closest('.exp-header'))) {
-        cursorGlow.classList.add('hovering');
-      } else {
-        cursorGlow.classList.remove('hovering');
-      }
-    });
-
-    /* Planets */
-    planets.forEach(function (planet) {
-      planet.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var section = planet.dataset.section;
-        openSection(section);
-      });
-    });
-
-    /* Panel close */
-    panelCloses.forEach(function (btn) {
-      btn.addEventListener('click', closeAllPanels);
-    });
-
-    /* Nav */
-    navBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        openSection(btn.dataset.section);
-      });
-    });
-
-    /* Zoom controls */
-    zoomInBtn.addEventListener('click', function () { zoomBy(ZOOM_SPEED); });
-    zoomOutBtn.addEventListener('click', function () { zoomBy(-ZOOM_SPEED); });
-    zoomResetBtn.addEventListener('click', function () { state.targetZoom = 1; state.targetPanX = 0; state.targetPanY = 0; });
-
-    /* Scroll zoom */
-    document.addEventListener('wheel', function (e) {
-      if (state.activeSection) return;
-      e.preventDefault();
-      zoomBy(e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED);
-    }, { passive: false });
-
-    /* Pan: mouse */
-    universe.addEventListener('mousedown', function (e) {
-      if (e.target.closest('.planet')) return;
-      state.isDragging = true;
-      state.dragStartX = e.clientX;
-      state.dragStartY = e.clientY;
-      state.dragPanStartX = state.targetPanX;
-      state.dragPanStartY = state.targetPanY;
-      universe.style.cursor = 'grabbing';
-    });
-    document.addEventListener('mousemove', function (e) {
-      if (!state.isDragging) return;
-      state.targetPanX = state.dragPanStartX + (e.clientX - state.dragStartX);
-      state.targetPanY = state.dragPanStartY + (e.clientY - state.dragStartY);
-    });
-    document.addEventListener('mouseup', function () {
-      state.isDragging = false;
-      universe.style.cursor = '';
-    });
-
-    /* Touch pan/pinch */
-    universe.addEventListener('touchstart', function (e) {
-      if (e.target.closest('.planet')) return;
-      if (e.touches.length === 1) {
-        state.isDragging = true;
-        state.dragStartX = e.touches[0].clientX;
-        state.dragStartY = e.touches[0].clientY;
-        state.dragPanStartX = state.targetPanX;
-        state.dragPanStartY = state.targetPanY;
-      } else if (e.touches.length === 2) {
-        state.touchDist = getTouchDist(e.touches);
-      }
-    }, { passive: true });
-    universe.addEventListener('touchmove', function (e) {
-      if (e.touches.length === 1 && state.isDragging) {
-        state.targetPanX = state.dragPanStartX + (e.touches[0].clientX - state.dragStartX);
-        state.targetPanY = state.dragPanStartY + (e.touches[0].clientY - state.dragStartY);
-      } else if (e.touches.length === 2) {
-        var newDist = getTouchDist(e.touches);
-        var delta = (newDist - state.touchDist) * 0.005;
-        zoomBy(delta);
-        state.touchDist = newDist;
-      }
-    }, { passive: true });
-    universe.addEventListener('touchend', function () {
-      state.isDragging = false;
-    });
-
-    /* Escape key */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        if (codeModal.classList.contains('active')) {
-          codeModal.classList.remove('active');
-        } else {
-          closeAllPanels();
-        }
-      }
-    });
-
-    /* Code modal close */
-    if (codeModalClose) {
-      codeModalClose.addEventListener('click', function () {
-        codeModal.classList.remove('active');
-      });
-    }
-    if (codeModal) {
-      codeModal.addEventListener('click', function (e) {
-        if (e.target === codeModal) {
-          codeModal.classList.remove('active');
-        }
-      });
-    }
-
-    /* Experience collapsible */
-    initExpCollapse();
-  }
-
-  /* ===== Zoom ===== */
-  function zoomBy(delta) {
-    state.targetZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, state.targetZoom + delta));
-  }
-
-  function getTouchDist(touches) {
-    var dx = touches[0].clientX - touches[1].clientX;
-    var dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  /* ===== Loading Sequence ===== */
-  function startLoadingSequence() {
-    var msgs = [
-      'Initializing star systems...',
-      'Generating nebula clouds...',
-      'Forming black hole...',
-      'Plotting planet orbits...',
-      'Calibrating warp drive...',
-      'Universe ready!'
-    ];
-    var progress = 0;
-    var msgIdx = 0;
-    var interval = setInterval(function () {
-      progress += 3 + Math.random() * 5;
-      if (progress > 100) progress = 100;
-      loadingBar.style.width = progress + '%';
-      if (progress > (msgIdx + 1) * (100 / msgs.length) && msgIdx < msgs.length - 1) {
-        msgIdx++;
-        loadingText.textContent = msgs[msgIdx];
-      }
-      if (progress >= 100) {
-        clearInterval(interval);
-        setTimeout(function () {
-          loadingScreen.classList.add('hidden');
-          state.loaded = true;
-        }, 600);
-      }
-    }, 80);
-  }
-
-  /* ===== Animation Loop ===== */
-  function animate() {
-    var time = performance.now();
-    drawStars(time);
-
-    /* Smooth zoom/pan */
-    state.zoom += (state.targetZoom - state.zoom) * LERP;
-    state.panX += (state.targetPanX - state.panX) * LERP;
-    state.panY += (state.targetPanY - state.panY) * LERP;
-    universe.style.transform = 'translate(' + state.panX + 'px,' + state.panY + 'px) scale(' + state.zoom + ')';
-
-    animFrameId = requestAnimationFrame(animate);
-  }
-
-  /* ===== Boot ===== */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
+    // Run once on load so the bar and nav are correct immediately
+    updateScrollProgress();
+    highlightActiveNav();
+  });
 })();
