@@ -782,7 +782,7 @@ body.theme-germany .timeline-marker {
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
-  padding-right: 6rem;
+  padding-right: 6rem; /* clearance for .project-badge positioned top-right */
 }
 
 .project-card.featured > p {
